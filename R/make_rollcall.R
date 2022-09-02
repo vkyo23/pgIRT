@@ -6,9 +6,10 @@
 #' @param unit_id string, column name which indicates voters.
 #' @param bill_id string, column name which indicates bills
 #' @param vote_col string, column name which indicates the votes.' 
+#' @param drop_unanimous bool, whether removing unanimous bills or not
 #' @export
 
-make_rollcall <- function(dataframe, unit_id = NULL, bill_id = NULL, vote_col = NULL) {
+make_rollcall <- function(dataframe, unit_id = NULL, bill_id = NULL, vote_col = NULL, drop_unanimous = FALSE) {
   if (!class(dataframe)[1] %in% c("data.frame", "tbl_df")) {
     stop("`dataframe` must be 'matrix', 'data.frame' or 'tbl_df' object.")
   } else {
@@ -35,28 +36,30 @@ make_rollcall <- function(dataframe, unit_id = NULL, bill_id = NULL, vote_col = 
   ## Label rows
   rownames(temp) <- rname
   
-  ## Remove resolutions which are unanimous voting.
-  ## First, get number of voting category by resolution and
-  ## record unanimous resolutions
-  category <- apply(temp, 2, function(x) unique(x[!is.na(x)]))
-  num_cat <- lapply(category, length) %>% unlist()
-  max_cat <- lapply(category, max) %>% unlist()
-  drop_res <- names(max_cat)[which(num_cat == 1)]
-  
-  ## Remove such resolutions
-  if (length(drop_res) != 0) {
-    cat("Remove some bills because they are unanimous votings:", drop_res, "\n")
-    temp <- temp[, which(!colnames(temp) %in% drop_res)]
-    num_cat <- num_cat[which(!names(num_cat) %in% drop_res)]
-    max_cat <- max_cat[which(!names(max_cat) %in% drop_res)]
-  }
-  ## Remove countries which have never voted
-  no_attend <- which(apply(temp, 1, function(x) all(is.na(x))))
-  if (length(no_attend) != 0) {
-    cat("Remove some units who have no voting record:", no_attend, "\n")
-    temp <- temp[-no_attend, ]
-    rname <- rname[-no_attend]
-    rownames(temp) <- rname
+  if (drop_unanimous) {
+    ## Remove resolutions which are unanimous voting.
+    ## First, get number of voting category by resolution and
+    ## record unanimous resolutions
+    category <- apply(temp, 2, function(x) unique(x[!is.na(x)]))
+    num_cat <- lapply(category, length) %>% unlist()
+    max_cat <- lapply(category, max) %>% unlist()
+    drop_res <- names(max_cat)[which(num_cat == 1)]
+    
+    ## Remove such resolutions
+    if (length(drop_res) != 0) {
+      cat("Remove some bills because they are unanimous votings:", drop_res, "\n")
+      temp <- temp[, which(!colnames(temp) %in% drop_res)]
+      num_cat <- num_cat[which(!names(num_cat) %in% drop_res)]
+      max_cat <- max_cat[which(!names(max_cat) %in% drop_res)]
+    }
+    ## Remove countries which have never voted
+    no_attend <- which(apply(temp, 1, function(x) all(is.na(x))))
+    if (length(no_attend) != 0) {
+      cat("Remove some units who have no voting record:", no_attend, "\n")
+      temp <- temp[-no_attend, ]
+      rname <- rname[-no_attend]
+      rownames(temp) <- rname
+    }
   }
   return(temp)
 }

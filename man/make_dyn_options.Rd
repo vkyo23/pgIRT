@@ -10,7 +10,8 @@ make_dyn_options(
   bill_id = NULL,
   time_id = NULL,
   vote_col = NULL,
-  add_bill_match = NULL
+  add_bill_match = NULL,
+  drop_unanimous = FALSE
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ make_dyn_options(
 \item{vote_col}{string, column name which indicates the votes.}
 
 \item{add_bill_match}{Optional. Numeric vector which indicates matched votes.}
+
+\item{drop_unanimous}{bool, whether removing unanimous bills or not}
 }
 \description{
 \code{make_dyn_options} is an auxilary function for dynamic pgIRT model and generates options for such models.

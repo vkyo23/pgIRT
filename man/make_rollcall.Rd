@@ -4,7 +4,13 @@
 \alias{make_rollcall}
 \title{Generating roll-call matrix for pgIRT model}
 \usage{
-make_rollcall(dataframe, unit_id = NULL, bill_id = NULL, vote_col = NULL)
+make_rollcall(
+  dataframe,
+  unit_id = NULL,
+  bill_id = NULL,
+  vote_col = NULL,
+  drop_unanimous = FALSE
+)
 }
 \arguments{
 \item{unit_id}{string, column name which indicates voters.}
@@ -12,6 +18,8 @@ make_rollcall(dataframe, unit_id = NULL, bill_id = NULL, vote_col = NULL)
 \item{bill_id}{string, column name which indicates bills}
 
 \item{vote_col}{string, column name which indicates the votes.'}
+
+\item{drop_unanimous}{bool, whether removing unanimous bills or not}
 
 \item{@param}{dataframe data.frame, tbl_df or matrix object; dataframe (long-format, i.e. voter-bill unit) of voting data.}
 }

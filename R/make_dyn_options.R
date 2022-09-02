@@ -7,10 +7,11 @@
 #' @param time_id string, column name which indicates times.
 #' @param vote_col string, column name which indicates the votes.
 #' @param add_bill_match Optional. Numeric vector which indicates matched votes.
+#' @param drop_unanimous bool, whether removing unanimous bills or not
 #' @export
 
 make_dyn_options <- function(dataframe, unit_id = NULL, bill_id = NULL, time_id = NULL, vote_col = NULL,
-                             add_bill_match = NULL) {
+                             add_bill_match = NULL, drop_unanimous = FALSE) {
   if (!class(dataframe)[1] %in% c("data.frame", "tbl_df")) {
     stop("`dataframe` must be 'matrix', 'data.frame' or 'tbl_df' object.")
   } else {
@@ -41,25 +42,27 @@ make_dyn_options <- function(dataframe, unit_id = NULL, bill_id = NULL, time_id 
   ## Label rows
   rownames(temp) <- rname
   
-  ## Remove resolutions which are unanimous voting.
-  ## First, get number of voting category by resolution and
-  ## record unanimous resolutions
-  category <- apply(temp, 2, function(x) unique(x[!is.na(x)]))
-  num_cat <- lapply(category, length) %>% unlist()
-  drop_res <- names(num_cat)[which(num_cat == 1)]
-  
-  ## Remove countries which have never voted
-  no_attend <- which(apply(temp, 1, function(x) all(is.na(x))))
-  
-  if (length(drop_res) != 0) {
-    cat("Remove some bills because they are unanimous votings:", drop_res, "\n")
-    dataframe <- dataframe %>% 
-      filter(!!bill_id %!in% drop_res)
-  }
-  if (length(no_attend) != 0) {
-    cat("Remove some units who have no voting record:", no_attend, "\n")
-    dataframe <- dataframe %>% 
-      filter(!!unit_id %!in% no_attend)
+  if (drop_unanimous) {
+    ## Remove resolutions which are unanimous voting.
+    ## First, get number of voting category by resolution and
+    ## record unanimous resolutions
+    category <- apply(temp, 2, function(x) unique(x[!is.na(x)]))
+    num_cat <- lapply(category, length) %>% unlist()
+    drop_res <- names(num_cat)[which(num_cat == 1)]
+    
+    ## Remove countries which have never voted
+    no_attend <- which(apply(temp, 1, function(x) all(is.na(x))))
+    
+    if (length(drop_res) != 0) {
+      cat("Remove some bills because they are unanimous votings:", drop_res, "\n")
+      dataframe <- dataframe %>% 
+        filter(!!bill_id %!in% drop_res)
+    }
+    if (length(no_attend) != 0) {
+      cat("Remove some units who have no voting record:", no_attend, "\n")
+      dataframe <- dataframe %>% 
+        filter(!!unit_id %!in% no_attend)
+    }
   }
   
   ## Time-individual map (matrix) -----

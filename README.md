@@ -8,18 +8,11 @@ The goal of pgIRT is to ...
 
 ## Installation
 
-You can install the released version of pgIRT from [CRAN](https://CRAN.R-project.org) with:
+You can install the released version of pgIRT from [github](https://github.com/vkyo23/pgIRT) with:
 
 ``` r
-install.packages("pgIRT")
+remotes::install_github("vkyo23/pgIRT")
 ```
 
-## Example
 
-This is a basic example which shows you how to solve a common problem:
-
-``` r
-library(pgIRT)
-## basic example code
-```
 

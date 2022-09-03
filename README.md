@@ -4,7 +4,7 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of pgIRT is to ...
+Item Response Theory model with Polya-Gamma data augmentation and EM Algorithm.
 
 ## Installation
 

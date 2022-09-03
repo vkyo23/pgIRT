@@ -18,13 +18,14 @@ make_rollcall <- function(dataframe, unit_id = NULL, bill_id = NULL, vote_col = 
   if (is.null(unit_id)) stop("Please specify `unit_id`.")
   if (is.null(bill_id)) stop("Please specify `bill_id`.")
   if (is.null(vote_col)) stop("Please specify `vote_col`.")
-  unit_id <- enquo(unit_id)
+  unit_id <- sym(unit_id)
   bill_id <- enquo(bill_id)
   vote_col <- enquo(vote_col)
   
   temp <- dataframe %>% 
     select(!!unit_id, !!bill_id, !!vote_col) %>% 
-    spread(key = !!bill_id, value = !!vote_col) %>% 
+    pivot_wider(names_from = !!bill_id, values_from = !!vote_col) %>% 
+    arrange(!!unit_id) %>% 
     as.matrix()
   
   ## Extract country name

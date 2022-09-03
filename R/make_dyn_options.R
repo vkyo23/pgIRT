@@ -82,7 +82,7 @@ make_dyn_options <- function(dataframe, unit_id = NULL, bill_id = NULL, time_id 
     distinct(!!bill_id, .keep_all = TRUE) %>% 
     select(!!bill_id, !!time_id) %>% 
     as.matrix()
-  tmp2 <- tmp2[, 2] - min(tmp2[, 2])
+  tmp2 <- as.numeric(tmp2[, 2]) - as.numeric(min(tmp2[, 2]))
   
   L <- list(session_individual = tmp1,
             bill_session = tmp2)

@@ -10,6 +10,7 @@
 #' @param tol a double, convergence threshold. Default is 1e-6.
 #' @param maxit a double, maximum number of iterations. Default is 500.
 #' @param verbose a double, the function prints the status every `verbose`. 
+#' @useDynLib pgIRT, .registration = TRUE
 #' @export
 
 pgIRT <- function(data, prior = NULL, init = NULL, constraint, model = c("bin", "bin_dyn", "multi", "multi_dyn"), 

@@ -16,6 +16,7 @@ Depends:
     stats,
     tidyr
 Imports:
+    Rcpp,
     crayon
 LinkingTo: Rcpp, RcppArmadillo
 Roxygen: list(markdown = TRUE)

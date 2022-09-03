@@ -4,6 +4,7 @@
 #' @param fit pgIRT object from `pgIRT()`.
 #' @param boot an integer, number of bootstrap iterations.
 #' @param verbose an integer, the function prints the status every `verbose`. 
+#' @useDynLib pgIRT, .registration = TRUE
 #' @export
 
 pgIRT_boot <- function(fit, boot = 100, verbose = NULL) {

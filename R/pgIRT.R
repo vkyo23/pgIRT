@@ -4,7 +4,7 @@
 #' @param data a matrix, roll-call matrix. For binary model, the matrix is allowed to contain only 1, 0 and NA. For multinomial, 1, 2, 3 and NA is allowed.
 #' @param prior a list, containing prior distribution.
 #' @param init a list, containing initial values.
-#' @param constraint a double, indicating the voter whose ideal point is always set positive
+#' @param constraint a integer or vector, indicating the voter whose ideal point is always set positive
 #' @param model string, one of "bin" (binary), "bin_dyn" (dynamic binary), "multi" (multinomial) or "multi_dyn" (dynamic multinomial)
 #' @param dyn_options, a list, containing the options for dynamic model. If you choose "bin_dyn" or "multi_dyn" for `model`, you must supply this argument.
 #' @param tol a double, convergence threshold. Default is 1e-6.
@@ -13,8 +13,8 @@
 #' @useDynLib pgIRT, .registration = TRUE
 #' @export
 
-pgIRT <- function(data, prior = NULL, init = NULL, constraint, model = c("bin", "bin_dyn", "multi", "multi_dyn"), 
-                  dyn_options = NULL, tol = 1e-6, maxit = 500, verbose = NULL) {
+pgIRT <- function(data, prior = NULL, init = NULL, constraint = NULL, model = c("bin", "bin_dyn", "multi", "multi_dyn"), 
+                  dyn_options = NULL, tol = 1e-6, maxit = 500, verbose = NULL, std = FALSE) {
   
   if (!class(data)[1] %in% c("matrix", "tbl_df", "data.frame")) {
     stop("`datamatrix` must be 'matrix', 'data.frame' or 'tbl_df' object.")
@@ -29,11 +29,11 @@ pgIRT <- function(data, prior = NULL, init = NULL, constraint, model = c("bin", 
   
   if (is.null(prior)) {
     prior <- list(a0 = 0,
-                  A0 = 5,
+                  A0 = 25,
                   b0 = 0,
-                  B0 = 5,
+                  B0 = 25,
                   Delta0 = rep(1, I),
-                  Delta = .1,
+                  Delta = .01,
                   theta0 = rep(0, I))
     if (model %in% c("multi", "multi_dyn")) {
       prior$a0 <- rep(0, 2)
@@ -46,7 +46,11 @@ pgIRT <- function(data, prior = NULL, init = NULL, constraint, model = c("bin", 
     stop("Please supply `init`! See more detail: ?make_init.")
   } 
   
-  
+  if (is.null(constraint)) {
+    is_const <- FALSE
+  } else {
+    is_const <- TRUE
+  }
   
   if (length(model) > 1) stop("Please specify `model` argument. Only one of 'bin', 'bin_dyn', 'multi' or 'multi_dyn' is allowed.")
   
@@ -76,6 +80,11 @@ pgIRT <- function(data, prior = NULL, init = NULL, constraint, model = c("bin", 
     } else {
       bill_match <- rep(NA, J)
     }
+    if (!is.null(constraint)) {
+      if (length(constraint) != length(unique(bill_session))) {
+        stop("`constraint` must be the same length as sessions.")
+      }
+    }
   } 
   
   cat("=========================================================================\n")
@@ -89,6 +98,7 @@ pgIRT <- function(data, prior = NULL, init = NULL, constraint, model = c("bin", 
     alpha <- init$alpha
     beta <- init$beta
     theta <- init$theta
+    if (is.null(constraint)) constraint <- which.max(theta)
     a0 <- prior$a0
     A0 <- prior$A0
     b0 <- prior$b0
@@ -103,7 +113,10 @@ pgIRT <- function(data, prior = NULL, init = NULL, constraint, model = c("bin", 
       omega <- get_Eomega_bin(theta_old, alpha_old, beta_old)
       
       # Mstep
-      theta <- update_theta_bin(Y, omega, alpha_old, beta_old, constraint)
+      theta <- update_theta_bin(Y, omega, alpha_old, beta_old, constraint, is_const)
+      if (std) {
+        theta <- scale(theta)[, 1]
+      }
       alpha <- update_alpha_bin(Y, omega, beta_old, theta, a0, A0)
       beta <- update_beta_bin(Y, omega, alpha, theta, b0, B0)
       
@@ -122,7 +135,7 @@ pgIRT <- function(data, prior = NULL, init = NULL, constraint, model = c("bin", 
         if (!is.null(rownames(Y))) names(theta) <- rownames(Y)
         parameter <- list(theta = theta, alpha = alpha, beta = beta)
         input <- list(data = data, constraint = constraint)
-        control <- list(maxit = maxit, tol = tol, verbose = verbose)
+        control <- list(maxit = maxit, tol = tol, verbose = verbose, std = std)
         L <- list(parameter = parameter, prior = prior, init = init,
                   input = input, control = control, model = "bin",
                   correlation = dplyr::bind_rows(cor_store), iter = g, converge = TRUE)
@@ -135,7 +148,7 @@ pgIRT <- function(data, prior = NULL, init = NULL, constraint, model = c("bin", 
         if (!is.null(rownames(Y))) names(theta) <- rownames(Y)
         parameter <- list(theta = theta, alpha = alpha, beta = beta)
         input <- list(data = data, constraint = constraint)
-        control <- list(maxit = maxit, tol = tol, verbose = verbose)
+        control <- list(maxit = maxit, tol = tol, verbose = verbose, std = std)
         L <- list(parameter = parameter, prior = prior, init = init,
                   input = input, control = control, model = "bin",
                   correlation = dplyr::bind_rows(cor_store), iter = g, converge = FALSE)
@@ -156,6 +169,7 @@ pgIRT <- function(data, prior = NULL, init = NULL, constraint, model = c("bin", 
     alpha <- init$alpha
     beta <- init$beta
     theta <- init$theta
+    if (is.null(constraint)) constraint <- rep(which.max(theta[, 1]), I)
     a0 <- prior$a0
     A0 <- prior$A0
     b0 <- prior$b0
@@ -174,7 +188,10 @@ pgIRT <- function(data, prior = NULL, init = NULL, constraint, model = c("bin", 
       
       # Mstep
       theta <- update_theta_bin_dyn(Y, omega, alpha_old, beta_old, theta0, Delta0, Delta,
-                                    constraint, session_individual, bill_session)
+                                    constraint, is_const, session_individual, bill_session)
+      if (std) {
+        theta <- apply(theta, 2, scale)
+      }
       alpha <- update_alpha_bin_dyn(Y, omega, beta_old, theta, a0, A0, bill_session, bill_match)
       beta <- update_beta_bin_dyn(Y, omega, alpha, theta, b0, B0, bill_session)
       
@@ -195,7 +212,7 @@ pgIRT <- function(data, prior = NULL, init = NULL, constraint, model = c("bin", 
         if (!is.null(rownames(Y))) rownames(theta) <- rownames(Y)
         parameter <- list(theta = theta, alpha = alpha, beta = beta)
         input <- list(data = data, constraint = constraint, dyn_options = dyn_options)
-        control <- list(maxit = maxit, tol = tol, verbose = verbose)
+        control <- list(maxit = maxit, tol = tol, verbose = verbose, std = std)
         L <- list(parameter = parameter, prior = prior, init = init,
                   input = input, control = control, model = "bin_dyn", 
                   correlation = dplyr::bind_rows(cor_store), iter = g, converge = TRUE)
@@ -208,7 +225,7 @@ pgIRT <- function(data, prior = NULL, init = NULL, constraint, model = c("bin", 
         if (!is.null(rownames(Y))) rownames(theta) <- rownames(Y)
         parameter <- list(theta = theta, alpha = alpha, beta = beta)
         input <- list(data = data, constraint = constraint, dyn_options = dyn_options)
-        control <- list(maxit = maxit, tol = tol, verbose = verbose)
+        control <- list(maxit = maxit, tol = tol, verbose = verbose, std = std)
         L <- list(parameter = parameter, prior = prior, init = init,
                   input = input, control = control, model = "bin_dyn",
                   correlation = dplyr::bind_rows(cor_store), iter = g, converge = FALSE)
@@ -229,6 +246,7 @@ pgIRT <- function(data, prior = NULL, init = NULL, constraint, model = c("bin", 
     alpha <- init$alpha
     beta <- init$beta
     theta <- init$theta
+    if (is.null(constraint)) constraint <- which.max(theta)
     a0 <- prior$a0
     A0 <- prior$A0
     b0 <- prior$b0
@@ -243,7 +261,10 @@ pgIRT <- function(data, prior = NULL, init = NULL, constraint, model = c("bin", 
       omega <- get_Eomega_mlt(theta_old, alpha_old, beta_old)
       
       # Mstep
-      theta <- update_theta_mlt(Y1, Y2, omega, alpha_old, beta_old, constraint, max_cat, num_cat)
+      theta <- update_theta_mlt(Y1, Y2, omega, alpha_old, beta_old, constraint, is_const, max_cat, num_cat)
+      if (std) {
+        theta <- scale(theta)[, 1]
+      }
       alpha <- update_alpha_mlt(Y1, Y2, omega, beta_old, theta, a0, A0)
       beta <- update_beta_mlt(Y1, Y2, omega, alpha, theta, b0, B0)
       
@@ -264,7 +285,7 @@ pgIRT <- function(data, prior = NULL, init = NULL, constraint, model = c("bin", 
         if (!is.null(rownames(Y1))) names(theta) <- rownames(Y1)
         parameter <- list(theta = theta, alpha = alpha, beta = beta)
         input <- list(data = data, constraint = constraint)
-        control <- list(maxit = maxit, tol = tol, verbose = verbose)
+        control <- list(maxit = maxit, tol = tol, verbose = verbose, std = std)
         L <- list(parameter = parameter, prior = prior, init = init,
                   input = input, control = control, model = "multi",
                   correlation = dplyr::bind_rows(cor_store), iter = g, converge = TRUE)
@@ -277,7 +298,7 @@ pgIRT <- function(data, prior = NULL, init = NULL, constraint, model = c("bin", 
         if (!is.null(rownames(Y1))) names(theta) <- rownames(Y1)
         parameter <- list(theta = theta, alpha = alpha, beta = beta)
         input <- list(data = data, constraint = constraint)
-        control <- list(maxit = maxit, tol = tol, verbose = verbose)
+        control <- list(maxit = maxit, tol = tol, verbose = verbose, std = std)
         L <- list(parameter = parameter, prior = prior, init = init,
                   input = input, control = control, model = "multi",
                   correlation = dplyr::bind_rows(cor_store), iter = g, converge = FALSE)
@@ -298,6 +319,7 @@ pgIRT <- function(data, prior = NULL, init = NULL, constraint, model = c("bin", 
     alpha <- init$alpha
     beta <- init$beta
     theta <- init$theta
+    if (is.null(constraint)) constraint <- rep(which.max(theta[, 1]), I)
     a0 <- prior$a0
     A0 <- prior$A0
     b0 <- prior$b0
@@ -316,7 +338,11 @@ pgIRT <- function(data, prior = NULL, init = NULL, constraint, model = c("bin", 
       
       # Mstep
       theta <- update_theta_mlt_dyn(Y1, Y2, omega, alpha_old, beta_old, theta0, Delta0, Delta, constraint,
+                                    is_const, 
                                     session_individual, bill_session, max_cat, num_cat)
+      if (std) {
+        theta <- apply(theta, 2, scale)
+      }
       alpha <- update_alpha_mlt_dyn(Y1, Y2, omega, beta_old, theta, a0, A0, bill_session, bill_match)
       beta <- update_beta_mlt_dyn(Y1, Y2, omega, alpha, theta, b0, B0, bill_session)
       
@@ -338,7 +364,7 @@ pgIRT <- function(data, prior = NULL, init = NULL, constraint, model = c("bin", 
         if (!is.null(rownames(Y1))) rownames(theta) <- rownames(Y1)
         parameter <- list(theta = theta, alpha = alpha, beta = beta)
         input <- list(data = data, constraint = constraint, dyn_options = dyn_options)
-        control <- list(maxit = maxit, tol = tol, verbose = verbose)
+        control <- list(maxit = maxit, tol = tol, verbose = verbose, std = std)
         L <- list(parameter = parameter, prior = prior, init = init,
                   input = input, control = control, model = "multi_dyn",
                   correlation = dplyr::bind_rows(cor_store), iter = g, converge = TRUE)
@@ -351,7 +377,7 @@ pgIRT <- function(data, prior = NULL, init = NULL, constraint, model = c("bin", 
         if (!is.null(rownames(Y1))) rownames(theta) <- rownames(Y1)
         parameter <- list(theta = theta, alpha = alpha, beta = beta)
         input <- list(data = data, constraint = constraint, dyn_options = dyn_options)
-        control <- list(maxit = maxit, tol = tol, verbose = verbose)
+        control <- list(maxit = maxit, tol = tol, verbose = verbose, std = std)
         L <- list(parameter = parameter, prior = prior, init = init,
                   input = input, control = control, model = "multi_dyn",
                   correlation = dplyr::bind_rows(cor_store), iter = g, converge = FALSE)

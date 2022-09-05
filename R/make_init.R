@@ -54,23 +54,26 @@ make_init <- function(data, model = c("bin", "bin_dyn", "multi", "multi_dyn"),
     ALLPOINT <- sum(is.na(data)) + sum(data == 1, na.rm = TRUE) + sum(data == 2, na.rm = TRUE) + sum(data == 3, na.rm = TRUE) 
     if (ALLPOINT != I * J) stop("For multinomial model, the data is allowed to contain only NA, 1, 2 and 3.")
     
+    idd <- tibble(id_num = 1:ncol(data), name = colnames(data))
     temp_d <- data %>% 
       as_tibble() %>% 
       mutate(id = rownames(data)) %>% 
       pivot_longer(-id) %>% 
-      filter(!is.na(value))
+      filter(!is.na(value)) %>% 
+      right_join(idd, by = "name")
+    
     sb_calc <- temp_d %>% 
-      group_by(name, value) %>% 
+      group_by(id_num, value) %>% 
       summarise(count = n()) %>% 
       ungroup() %>% 
-      group_by(name) %>% 
+      group_by(id_num) %>% 
       summarise(vote = value, count = count, all = sum(count),
                 ref_cat = max(value)) %>% 
       ungroup() %>% 
-      group_by(name, vote) %>% 
+      group_by(id_num, vote) %>% 
       summarise(count = count, probs = count / all, all = all,
                 ref_cat = ref_cat) %>% 
-      group_by(name) %>% 
+      group_by(id_num) %>% 
       summarise(vote = vote, count = count, 
                 probs = probs, cumsum = cumsum(count) / all,
                 sb = probs / (1 - (cumsum - probs)),
@@ -78,17 +81,20 @@ make_init <- function(data, model = c("bin", "bin_dyn", "multi", "multi_dyn"),
       filter(vote != max(vote)) %>% 
       ungroup() %>% 
       mutate(sb_value = qlogis(sb)) %>% 
-      select(name, vote, sb_value, ref_cat)
+      select(id_num, vote, sb_value, ref_cat)
     
     ## Assign same values to matched resolutions
-    alpha_init <- sb_calc %>% 
+    sb1 <- sb_calc %>% 
       filter(vote == 1) %>%
-      rename(alpha1 = sb_value) %>% 
-      left_join(sb_calc %>% 
-                  filter(vote == 2) %>% 
-                  select(alpha2 = sb_value, name), by = "name") %>% 
+      select(alpha1 = sb_value, id_num)
+    sb2 <- sb_calc %>% 
+      filter(vote == 2) %>% 
+      select(alpha2 = sb_value, id_num)
+    alpha_init <- idd %>% 
+      left_join(sb1, by = "id_num") %>% 
+      left_join(sb2, by = "id_num") %>% 
       select(name, alpha1, alpha2)
-    
+    nam <- alpha_init$name
     if (!is.null(bill_match)) {
       alpha_init <- alpha_init %>% 
         bind_cols(tibble(match = as.character(bill_match))) %>% 
@@ -102,14 +108,18 @@ make_init <- function(data, model = c("bin", "bin_dyn", "multi", "multi_dyn"),
                new_alpha2 = if_else(is.na(alpha2), as.double(NA), new_alpha2)) %>% 
         select(alpha1 = new_alpha1, alpha2 = new_alpha2) %>% 
         as.matrix()
+      
     } else {
       alpha_init <- alpha_init %>% 
         select(-name) %>% 
         as.matrix()
+      
     }
     
+    rownames(alpha_init) <- nam
     beta_init <- ifelse(!is.na(alpha_init), rnorm(length(alpha_init), 0, 5), NA)
     colnames(beta_init) <- c("beta1", "beta2")
+    rownames(beta_init) <- nam
     
     theta_init <- scale(rowMeans(data, na.rm = TRUE))[, 1]
     if (!is.null(constraint)) {

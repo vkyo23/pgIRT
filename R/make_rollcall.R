@@ -62,6 +62,7 @@ make_rollcall <- function(dataframe, unit_id = NULL, bill_id = NULL, vote_col = 
       rownames(temp) <- rname
     }
   }
+  temp <- temp[, (apply(temp, 2, function(x) min(x, na.rm = TRUE) == 1) | apply(temp, 2, function(x) min(x, na.rm = TRUE) == 0))]
   return(temp)
 }
 

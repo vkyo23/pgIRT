@@ -8,12 +8,13 @@ pgIRT(
   data,
   prior = NULL,
   init = NULL,
-  constraint,
+  constraint = NULL,
   model = c("bin", "bin_dyn", "multi", "multi_dyn"),
   dyn_options = NULL,
   tol = 1e-06,
   maxit = 500,
-  verbose = NULL
+  verbose = NULL,
+  std = FALSE
 )
 }
 \arguments{
@@ -23,7 +24,7 @@ pgIRT(
 
 \item{init}{a list, containing initial values.}
 
-\item{constraint}{a double, indicating the voter whose ideal point is always set positive}
+\item{constraint}{a integer or vector, indicating the voter whose ideal point is always set positive}
 
 \item{model}{string, one of "bin" (binary), "bin_dyn" (dynamic binary), "multi" (multinomial) or "multi_dyn" (dynamic multinomial)}
 

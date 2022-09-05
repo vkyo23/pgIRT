@@ -73,7 +73,8 @@ pgIRT_boot <- function(fit, boot = 100, verbose = NULL) {
                               constraint = fit$input$constraint,
                               model = fit$model,
                               dyn_options = fit$input$dyn_options,
-                              verbose = 10))
+                              verbose = 10,
+                              std = fit$control$std))
       if (!fit_boot$converge) {
         cat(crayon::red("Bootstrap", b, "failed to converge...\n"))
       }

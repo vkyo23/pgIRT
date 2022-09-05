@@ -30,7 +30,7 @@ make_dyn_options <- function(dataframe, unit_id = NULL, bill_id = NULL, time_id 
   
   temp <- dataframe %>% 
     select(!!unit_id, !!bill_id, !!vote_col) %>% 
-    spread(key = !!bill_id, value = !!vote_col) %>% 
+    pivot_wider(names_from = !!bill_id, values_from = !!vote_col) %>% 
     as.matrix()
   
   ## Extract country name
@@ -41,6 +41,12 @@ make_dyn_options <- function(dataframe, unit_id = NULL, bill_id = NULL, time_id 
   
   ## Label rows
   rownames(temp) <- rname
+  
+  dr <- which(!apply(temp, 2, function(x) min(x, na.rm = TRUE) %in% c(0, 1)))
+  if (length(dr) != 0) {
+    dataframe <- dataframe %>% 
+      filter(!!bill_id %!in% names(dr))
+  }
   
   if (drop_unanimous) {
     ## Remove resolutions which are unanimous voting.

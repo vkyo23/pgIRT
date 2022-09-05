@@ -69,19 +69,19 @@ update_beta_mlt_dyn <- function(Y1, Y2, Omega, alpha, theta, b0, B0, bill_sessio
     .Call(`_pgIRT_update_beta_mlt_dyn`, Y1, Y2, Omega, alpha, theta, b0, B0, bill_session)
 }
 
-update_theta_bin <- function(Y, omega, alpha, beta, constraint) {
-    .Call(`_pgIRT_update_theta_bin`, Y, omega, alpha, beta, constraint)
+update_theta_bin <- function(Y, omega, alpha, beta, constraint, is_const) {
+    .Call(`_pgIRT_update_theta_bin`, Y, omega, alpha, beta, constraint, is_const)
 }
 
-update_theta_bin_dyn <- function(Y, omega, alpha, beta, theta0, Delta0, Delta, constraint, session_individual, bill_session) {
-    .Call(`_pgIRT_update_theta_bin_dyn`, Y, omega, alpha, beta, theta0, Delta0, Delta, constraint, session_individual, bill_session)
+update_theta_bin_dyn <- function(Y, omega, alpha, beta, theta0, Delta0, Delta, constraint, is_const, session_individual, bill_session) {
+    .Call(`_pgIRT_update_theta_bin_dyn`, Y, omega, alpha, beta, theta0, Delta0, Delta, constraint, is_const, session_individual, bill_session)
 }
 
-update_theta_mlt <- function(Y1, Y2, Omega, alpha, beta, constraint, max_cat, num_cat) {
-    .Call(`_pgIRT_update_theta_mlt`, Y1, Y2, Omega, alpha, beta, constraint, max_cat, num_cat)
+update_theta_mlt <- function(Y1, Y2, Omega, alpha, beta, constraint, is_const, max_cat, num_cat) {
+    .Call(`_pgIRT_update_theta_mlt`, Y1, Y2, Omega, alpha, beta, constraint, is_const, max_cat, num_cat)
 }
 
-update_theta_mlt_dyn <- function(Y1, Y2, Omega, alpha, beta, theta0, Delta0, Delta, constraint, session_individual, bill_session, max_cat, num_cat) {
-    .Call(`_pgIRT_update_theta_mlt_dyn`, Y1, Y2, Omega, alpha, beta, theta0, Delta0, Delta, constraint, session_individual, bill_session, max_cat, num_cat)
+update_theta_mlt_dyn <- function(Y1, Y2, Omega, alpha, beta, theta0, Delta0, Delta, constraint, is_const, session_individual, bill_session, max_cat, num_cat) {
+    .Call(`_pgIRT_update_theta_mlt_dyn`, Y1, Y2, Omega, alpha, beta, theta0, Delta0, Delta, constraint, is_const, session_individual, bill_session, max_cat, num_cat)
 }
 

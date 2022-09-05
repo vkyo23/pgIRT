@@ -6,7 +6,7 @@ using namespace arma;
 // update theta (binary)
 //[[Rcpp::export]]
 NumericVector update_theta_bin(NumericMatrix Y, NumericMatrix omega, NumericVector alpha, 
-                               NumericVector beta, int constraint) {
+                               NumericVector beta, int constraint, bool is_const) {
   int I = Y.nrow();
   int J = Y.ncol();
   
@@ -29,8 +29,10 @@ NumericVector update_theta_bin(NumericMatrix Y, NumericMatrix omega, NumericVect
     theta[i] = (1 / left_part) * right_part;
   }
   
-  if (theta[constraint - 1] < 0) {
-    theta = -theta;
+  if (is_const) {
+    if (theta[constraint - 1] < 0) {
+      theta = -theta;
+    }
   }
   
   return(theta);
@@ -40,7 +42,8 @@ NumericVector update_theta_bin(NumericMatrix Y, NumericMatrix omega, NumericVect
 //[[Rcpp::export]]
 NumericMatrix update_theta_bin_dyn(arma::mat Y, arma::mat omega, arma::vec alpha, arma::vec beta,
                                    NumericVector theta0, NumericVector Delta0, double Delta, 
-                                   int constraint, arma::mat session_individual, arma::vec bill_session) {
+                                   IntegerVector constraint, bool is_const, 
+                                   arma::mat session_individual, arma::vec bill_session) {
   
   
   // Rows
@@ -129,9 +132,12 @@ NumericMatrix update_theta_bin_dyn(arma::mat Y, arma::mat omega, arma::vec alpha
   
   NumericMatrix draw_2 = as<NumericMatrix>(wrap(draw));
   
+  
   for (int t = 0; t < Time; t++) {
-    if (draw_2(constraint - 1, t) < 0) {
-      draw_2(_, t) = -draw_2(_, t);
+    if (is_const) {
+      if (draw_2(constraint[t] - 1, t) < 0) {
+        draw_2(_, t) = -draw_2(_, t);
+      }
     }
     draw_2(_, t) = ifelse(draw_2(_, t) == 0, NA_REAL, draw_2(_, t));
   }
@@ -143,6 +149,7 @@ NumericMatrix update_theta_bin_dyn(arma::mat Y, arma::mat omega, arma::vec alpha
 //[[Rcpp::export]]
 NumericVector update_theta_mlt(NumericMatrix Y1, NumericMatrix Y2, List Omega, 
                                NumericMatrix alpha, NumericMatrix beta, int constraint,
+                               bool is_const,
                                NumericVector max_cat, NumericVector num_cat) {
   int I = Y1.nrow();
   int J = Y1.ncol();
@@ -204,8 +211,10 @@ NumericVector update_theta_mlt(NumericMatrix Y1, NumericMatrix Y2, List Omega,
     theta(i) = (1 / (1 + a_part)) * b_part;
   }
   
-  if (theta[constraint - 1] < 0) {
-    theta = -theta;
+  if (is_const) {
+    if (theta[constraint - 1] < 0) {
+      theta = -theta;
+    }
   }
   
   return(theta);
@@ -215,7 +224,8 @@ NumericVector update_theta_mlt(NumericMatrix Y1, NumericMatrix Y2, List Omega,
 //[[Rcpp::export]]
 NumericMatrix update_theta_mlt_dyn(arma::mat Y1, arma::mat Y2, List Omega, NumericMatrix alpha, NumericMatrix beta,
                                    NumericVector theta0, NumericVector Delta0, double Delta, 
-                                   int constraint, arma::mat session_individual, arma::vec bill_session, 
+                                   IntegerVector constraint, bool is_const,
+                                   arma::mat session_individual, arma::vec bill_session, 
                                    arma::vec max_cat, arma::vec num_cat) {
   
   
@@ -349,8 +359,10 @@ NumericMatrix update_theta_mlt_dyn(arma::mat Y1, arma::mat Y2, List Omega, Numer
   NumericMatrix draw_2 = as<NumericMatrix>(wrap(draw));
   
   for (int t = 0; t < Time; t++) {
-    if (draw_2(constraint - 1, t) < 0) {
-      draw_2(_, t) = -draw_2(_, t);
+    if (is_const) {
+      if (draw_2(constraint[t] - 1, t) < 0) {
+        draw_2(_, t) = -draw_2(_, t);
+      }
     }
     draw_2(_, t) = ifelse(draw_2(_, t) == 0, NA_REAL, draw_2(_, t));
   }

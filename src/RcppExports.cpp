@@ -132,6 +132,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// set_constraint
+NumericMatrix set_constraint(NumericMatrix theta, NumericVector constraint);
+RcppExport SEXP _pgIRT_set_constraint(SEXP thetaSEXP, SEXP constraintSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type theta(thetaSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type constraint(constraintSEXP);
+    rcpp_result_gen = Rcpp::wrap(set_constraint(theta, constraint));
+    return rcpp_result_gen;
+END_RCPP
+}
 // update_alpha_bin
 NumericVector update_alpha_bin(NumericMatrix Y, NumericMatrix omega, NumericVector beta, NumericVector theta, double a0, double A0);
 RcppExport SEXP _pgIRT_update_alpha_bin(SEXP YSEXP, SEXP omegaSEXP, SEXP betaSEXP, SEXP thetaSEXP, SEXP a0SEXP, SEXP A0SEXP) {
@@ -361,6 +373,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_pgIRT_get_Eomega_mlt", (DL_FUNC) &_pgIRT_get_Eomega_mlt, 3},
     {"_pgIRT_get_Eomega_mlt_dyn", (DL_FUNC) &_pgIRT_get_Eomega_mlt_dyn, 4},
     {"_pgIRT_organize_Y", (DL_FUNC) &_pgIRT_organize_Y, 3},
+    {"_pgIRT_set_constraint", (DL_FUNC) &_pgIRT_set_constraint, 2},
     {"_pgIRT_update_alpha_bin", (DL_FUNC) &_pgIRT_update_alpha_bin, 6},
     {"_pgIRT_update_alpha_bin_dyn", (DL_FUNC) &_pgIRT_update_alpha_bin_dyn, 8},
     {"_pgIRT_update_alpha_mlt", (DL_FUNC) &_pgIRT_update_alpha_mlt, 7},

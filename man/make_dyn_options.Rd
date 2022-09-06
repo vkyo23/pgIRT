@@ -10,25 +10,26 @@ make_dyn_options(
   bill_id = NULL,
   time_id = NULL,
   vote_col = NULL,
-  add_bill_match = NULL,
+  bill_match = NULL,
   drop_unanimous = FALSE
 )
 }
 \arguments{
-\item{dataframe}{data.frame, tbl_df or matrix object; dataframe (long-format, i.e. voter-bill unit) of voting data.}
+\item{dataframe}{data.frame, tbl_df or matrix object, dataframe (long-format, i.e. voter-bill unit) of voting data.}
 
-\item{unit_id}{string, column name which indicates voters.}
+\item{unit_id}{a string, column name which indicates voters. Integer or numeric column is highly recommended.}
 
-\item{bill_id}{string, column name which indicates bills}
+\item{bill_id}{a string, column name which indicates bills. Only integer or numeric column is allowed.}
 
-\item{time_id}{string, column name which indicates times.}
+\item{time_id}{a string, column name which indicates sessions. Only integer or numeric column is allowed.}
 
-\item{vote_col}{string, column name which indicates the votes.}
+\item{vote_col}{a string, column name which indicates the votes. Only integer or numeric column is allowed.}
 
-\item{add_bill_match}{Optional. Numeric vector which indicates matched votes.}
+\item{bill_match}{(Optional). (Optional). An integer vector which indicates matched bills (the location of matched bills, starts from 0)
+and is the same length as the number of bills. If a bill does not have matches, please fill NA. Using \link{make_bill_match} is strongly recommended.}
 
-\item{drop_unanimous}{bool, whether removing unanimous bills or not}
+\item{drop_unanimous}{a bool, whether removing unanimous bills or not. Default is FALSE.}
 }
 \description{
-\code{make_dyn_options} is an auxilary function for dynamic pgIRT model and generates options for such models.
+\code{make_dyn_options} is an auxiliary function for dynamic pgIRT model and generates options for such models.
 }

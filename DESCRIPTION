@@ -1,24 +1,23 @@
 Package: pgIRT
 Type: Package
-Title: Polya-Gamma Item Response Theory model
+Title: Fast IRT estimation with Polya-Gamma data augmentation and EM Algorithm
 Version: 0.0.1
 Date: 2022-09-01
 Author: Ukyo Kanetaka
 Maintainer: Ukyo Kanetaka <u.kanetaka@gmail.com>
-Description: Fast IRT estimation with Polya-Gamma data augmentation and EM Algorithm.
+Description: This package implements fast IRT model with Polya-Gamma data augmentation and EM Algorithm.
 License: MIT + file LICENSE
-Depends: 
+Depends: Rcpp
+Imports: 
+    crayon,
     dplyr,
-    magrittr,
-    Rcpp (>= 1.0.7),
-    RcppArmadillo,
     rlang,
     stats,
     tidyr
-Imports:
-    Rcpp,
-    crayon
-LinkingTo: Rcpp, RcppArmadillo
+LinkingTo: 
+    Rcpp, 
+    RcppArmadillo
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.0
 Encoding: UTF-8
+

@@ -13,17 +13,16 @@ make_rollcall(
 )
 }
 \arguments{
-\item{unit_id}{string, column name which indicates voters.}
+\item{dataframe}{data.frame, tbl_df or matrix object, dataframe (long-format, i.e. voter-bill unit) of voting data.}
 
-\item{bill_id}{string, column name which indicates bills}
+\item{unit_id}{a string, column name which indicates voters. Integer or numeric column is highly recommended.}
 
-\item{vote_col}{string, column name which indicates the votes.'}
+\item{bill_id}{a string, column name which indicates bills. Only integer or numeric column is allowed.}
 
-\item{drop_unanimous}{bool, whether removing unanimous bills or not}
+\item{vote_col}{a string, column name which indicates the votes. Only integer or numeric column is allowed.}
 
-\item{@param}{dataframe data.frame, tbl_df or matrix object; dataframe (long-format, i.e. voter-bill unit) of voting data.}
+\item{drop_unanimous}{a bool, whether removing unanimous bills or not. Default is FALSE.}
 }
 \description{
-\code{make_rolllcall} is an auxilary function for pgIRT model
-and generates roll-call matrix from long-dataframe.
+\code{make_rolllcall} is an auxiliary function for pgIRT model and generates roll-call matrix from long-dataframe.
 }

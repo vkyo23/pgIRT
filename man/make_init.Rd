@@ -17,12 +17,13 @@ make_init(
 
 \item{model}{string, one of "bin" (binary), "bin_dyn" (dynamic binary), "multi" (multinomial) or "multi_dyn" (dynamic multinomial)}
 
-\item{T}{string, indicating the length of times. If you choose "bin_dyn" or "multi_dyn" for \code{model}, you must supply this argument.}
+\item{T}{an integer, indicating the number of sessions. If you choose "bin_dyn" or "multi_dyn" for \code{model}, you must supply this argument.}
 
-\item{bill_match}{Numeric vector which indicates matched votes.}
+\item{bill_match}{(Optional). (Optional). An integer vector which indicates matched bills (the location of matched bills, starts from 0)
+and is the same length as the number of bills. If a bill does not have matches, please fill NA. Using \link{make_bill_match} is strongly recommended.}
 
-\item{constraint}{a double, indicating the voter whose ideal point is always set positive}
+\item{constraint}{an integer or integer vector (for dynamic model, T-length), indicating the voter whose ideal point is always set positive.}
 }
 \description{
-\code{make_init} is an auxilary function for pgIRT model and generates optimal initial values based on roll-call matrix.
+\code{make_init} is an auxiliary function for pgIRT model and generates optimal initial values based on roll-call matrix.
 }

@@ -9,9 +9,9 @@ pgIRT_boot(fit, boot = 100, verbose = NULL)
 \arguments{
 \item{fit}{pgIRT object from \code{pgIRT()}.}
 
-\item{boot}{an integer, number of bootstrap iterations.}
+\item{boot}{an integer, number of bootstrap iterations. Default is 100.}
 
-\item{verbose}{an integer, the function prints the status every \code{verbose}.}
+\item{verbose}{an integer, the function prints the status every \code{verbose}. Default is NULL.}
 }
 \description{
 \link{pgIRT_boot} implements paramtric bootstrap for pgIRT model to compute statistical uncertainty.

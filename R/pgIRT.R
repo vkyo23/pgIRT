@@ -1,20 +1,53 @@
 #' @title Polya-Gamma IRT with EM algorithm
-#' @description \link{pgIRT} Estimates IRT model (binary, multinomial and dynamic) by Polya-Gamma data augmentation and EM algorithm. 
-#'
-#' @param data a matrix, roll-call matrix. For binary model, the matrix is allowed to contain only 1, 0 and NA. For multinomial, 1, 2, 3 and NA is allowed.
-#' @param prior a list, containing prior distribution.
-#' @param init a list, containing initial values.
-#' @param constraint a integer or vector, indicating the voter whose ideal point is always set positive
-#' @param model string, one of "bin" (binary), "bin_dyn" (dynamic binary), "multi" (multinomial) or "multi_dyn" (dynamic multinomial)
-#' @param dyn_options, a list, containing the options for dynamic model. If you choose "bin_dyn" or "multi_dyn" for `model`, you must supply this argument.
-#' @param tol a double, convergence threshold. Default is 1e-6.
-#' @param maxit a double, maximum number of iterations. Default is 500.
-#' @param verbose a double, the function prints the status every `verbose`. 
+#' @description \link{pgIRT} Estimates IRT model (binary, multinomial and dynamic) by Polya-Gamma data augmentation and EM algorithm.
+#' 
+#' @param data a matrix, roll-call matrix (I x J). For binary model, the matrix is allowed to contain only 1, 0 and NA. For multinomial, 1, 2, 3 and NA is allowed.
+#' @param model a string, one of "bin" (binary), "bin_dyn" (dynamic binary), "multi" (multinomial) or "multi_dyn" (dynamic multinomial)
+#' @param prior a list, containing prior distribution:
+#' \itemize{
+#'   \item \code{a0} a double ("bin", "bin_dyn")  or 2-length vector ("multi", "multi_dyn"), prior mean of alpha. Default is 0 ("bin", "bin_dyn"), c(0, 0) ("multi", "multi_dyn").
+#'   \item \code{A0} a double ("bin", "bin_dyn") or 2-length vector ("multi", "multi_dyn"), prior variance of alpha. Default is 25 ("bin", "bin_dyn"), c(25, 25) ("multi", "multi_dyn").
+#'   \item \code{b0} a double ("bin", "bin_dyn") or 2-length vector ("multi", "multi_dyn"), prior mean of beta Default is 0 ("bin", "bin_dyn"), c(0, 0) ("multi", "multi_dyn").
+#'   \item \code{B0} a double ("bin", "bin_dyn") or 2-length vector ("multi", "multi_dyn"), prior variance of beta. Default is 25 ("bin", "bin_dyn"), c(25, 25) ("multi", "multi_dyn").
+#'   \item \code{theta0} a numeric vector (I length), prior mean of theta_i0 for dynamic model ("bin_dyn", "multi_dyn"). Default is \code{rep(0, I)}. 
+#'   \item \code{Delta0} a numeric vector (I length), prior variance of theta_i0 for dynamic model ("bin_dyn", "multi_dyn"). Default is \code{rep(1, I)}.
+#'   \item \code{Delta} a double, prior evolution variance of theta_it for dynamic model ("bin_dyn", "multi_dyn"). Default is 0.01.
+#' }
+#' @param init a list, containing initial values (strongly recommended to use \link{make_init}):
+#' \itemize{
+#'   \item \code{alpha} J length vector of alpha for "bin" and "bin_dyn" model. J x 2 matrix for "multi" and "multi_dyn".
+#'   \item \code{beta} J length vector of beta for "bin" and "bin_dyn" model. J x 2 matrix for "multi" and "multi_dyn".
+#'   \item \code{theta} I length vector of theta for "bin" and "multi" model. I x T (sessions) matrix for "bin_dyn" and "multi_dyn".
+#' }
+#' @param constraint an integer or integer vector (for dynamic model, the same length as the number of sessions), indicating the voter whose ideal point is always set positive.
+#' @param dyn_options a list, containing the options for dynamic model. If you choose "bin_dyn" or "multi_dyn" for `model`, you must supply this argument. Using \link{make_dyn_options}() is strongly recommended:
+#' \itemize{
+#'   \item \code{session_individual} a matrix, the first column contains attending sessions (starts from 0) of individuals and 
+#'   the second column contains the identifiers of individuals.
+#'   \item \code{bill_session} an integer vector, indicating the sessions each bill belongs to (starts from 0).
+#'   \item \code{bill_match} (Optional). An integer vector which indicates matched bills (the location of matched bills, starts from 0) 
+#'   and is the same length as the number of bills. If a bill does not have matches, please fill NA. Using \link{make_bill_match} is strongly recommended.
+#' }
+#' @param tol a double (< 1), convergence threshold. Default is 1e-6.
+#' @param maxit am integer, maximum number of iterations for EM. Default is 500.
+#' @param verbose a integer, the function prints the status every `verbose`. Default is NULL.
+#' @param std a bool, whether ideal points are standardized or not. Default is FALSE.
+#' 
+#' @importFrom crayon yellow
+#' @importFrom stats cor na.omit
 #' @useDynLib pgIRT, .registration = TRUE
 #' @export
 
-pgIRT <- function(data, prior = NULL, init = NULL, constraint = NULL, model = c("bin", "bin_dyn", "multi", "multi_dyn"), 
-                  dyn_options = NULL, tol = 1e-6, maxit = 500, verbose = NULL, std = FALSE) {
+pgIRT <- function(data, 
+                  model = c("bin", "bin_dyn", "multi", "multi_dyn"), 
+                  prior = NULL, 
+                  init = NULL, 
+                  constraint = NULL, 
+                  dyn_options = NULL, 
+                  tol = 1e-6, 
+                  maxit = 500, 
+                  verbose = NULL, 
+                  std = FALSE) {
   
   if (!class(data)[1] %in% c("matrix", "tbl_df", "data.frame")) {
     stop("`datamatrix` must be 'matrix', 'data.frame' or 'tbl_df' object.")
@@ -44,7 +77,7 @@ pgIRT <- function(data, prior = NULL, init = NULL, constraint = NULL, model = c(
   }
   if (is.null(init)) {
     stop("Please supply `init`! See more detail: ?make_init.")
-  } 
+  }
   
   if (is.null(constraint)) {
     is_const <- FALSE
@@ -56,7 +89,7 @@ pgIRT <- function(data, prior = NULL, init = NULL, constraint = NULL, model = c(
   
   if (model %in% c("multi", "multi_dyn")) {
     md <- "Multinomial (Stick-Breaking)"
-    ALLPOINT <- sum(is.na(data)) + sum(data == 1, na.rm = TRUE) + sum(data == 2, na.rm = TRUE) + sum(data == 3, na.rm = TRUE) 
+    ALLPOINT <- sum(is.na(data)) + sum(data == 1, na.rm = TRUE) + sum(data == 2, na.rm = TRUE) + sum(data == 3, na.rm = TRUE)
     if (ALLPOINT != I * J) stop("For multinomial model, the data is allowed to contain only NA, 1, 2 and 3.")
     Y1 <- Y2 <- data
     Y1[Y1 %in% c(2, 3)] <- 0
@@ -81,11 +114,13 @@ pgIRT <- function(data, prior = NULL, init = NULL, constraint = NULL, model = c(
       bill_match <- rep(NA, J)
     }
     if (!is.null(constraint)) {
-      if (length(constraint) != length(unique(bill_session))) {
-        stop("`constraint` must be the same length as sessions.")
+      if (length(constraint) == 1) {
+        constraint <- rep(constraint, length(unique(bill_session)))
+      } else if (length(constraint) != length(unique(bill_session))) {
+        stop("`constraint` must be the same length as the number of sessions.")
       }
     }
-  } 
+  }
   
   cat("=========================================================================\n")
   cat("Polya-Gamma data augmentation Item Response Theory Model via EM Algorithm\n")
@@ -121,9 +156,9 @@ pgIRT <- function(data, prior = NULL, init = NULL, constraint = NULL, model = c(
       beta <- update_beta_bin(Y, omega, alpha, theta, b0, B0)
       
       # Convergence check
-      theta_cor <- cor(na.omit(as.numeric(theta_old)), na.omit(as.numeric(theta)))
-      alpha_cor <- cor(alpha_old, alpha)
-      beta_cor <- cor(beta_old, beta)
+      theta_cor <- stats::cor(stats::na.omit(as.numeric(theta_old)), stats::na.omit(as.numeric(theta)))
+      alpha_cor <- stats::cor(alpha_old, alpha)
+      beta_cor <- stats::cor(beta_old, beta)
       
       all_cor <- abs(c(theta_cor, alpha_cor, beta_cor))
       names(all_cor) <- c("theta", "alpha", "beta")
@@ -133,37 +168,39 @@ pgIRT <- function(data, prior = NULL, init = NULL, constraint = NULL, model = c(
       
       if (g > 1 & max(1 - all_cor) < tol) {
         if (!is.null(rownames(Y))) names(theta) <- rownames(Y)
+        if (!is.null(colnames(Y))) names(alpha) <- names(beta) <- colnames(Y)
         parameter <- list(theta = theta, alpha = alpha, beta = beta)
         input <- list(data = data, constraint = constraint)
         control <- list(maxit = maxit, tol = tol, verbose = verbose, std = std)
         L <- list(parameter = parameter, prior = prior, init = init,
                   input = input, control = control, model = "bin",
                   correlation = dplyr::bind_rows(cor_store), iter = g, converge = TRUE)
-        class(L) <- "pgIRT"
-        cat("Model converged at iteration", g, ":", crayon::yellow(round(proc.time()[3] - stime, 2), "sec\n"))
+        class(L) <- "pgIRT_fit"
+        cat("Model converged at iteration", g, ":", crayon::yellow(round(proc.time()[3] - stime, 1), "sec\n"))
         return(L)
       }
       
       if (g == maxit) {
         if (!is.null(rownames(Y))) names(theta) <- rownames(Y)
+        if (!is.null(colnames(Y))) names(alpha) <- names(beta) <- colnames(Y)
         parameter <- list(theta = theta, alpha = alpha, beta = beta)
         input <- list(data = data, constraint = constraint)
         control <- list(maxit = maxit, tol = tol, verbose = verbose, std = std)
         L <- list(parameter = parameter, prior = prior, init = init,
                   input = input, control = control, model = "bin",
                   correlation = dplyr::bind_rows(cor_store), iter = g, converge = FALSE)
-        class(L) <- "pgIRT"
-        warning("Model falied to converge!\n Return the result as it is, but it may be unreliable : total time ", 
-                round(proc.time()[3] - stime, 2), " sec\n")
+        class(L) <- "pgIRT_fit"
+        warning("Model falied to converge!\n Return the result as it is, but it may be unreliable : total time ",
+                round(proc.time()[3] - stime, 1), " sec\n")
         return(L)
       }
       
       if (g %% verbose == 0) {
-        cat("Iteration", g, ": eval =", names(which.max(1 - all_cor)), 
-            max(1 - all_cor), crayon::yellow("elapsed", round(proc.time()[3] - stime, 2), "sec\n"))
+        cat("Iteration", g, ": eval =", names(which.max(1 - all_cor)),
+            max(1 - all_cor), crayon::yellow("elapsed", round(proc.time()[3] - stime, 1), "sec\n"))
       }
     }
-  } 
+  }
   
   if (model == "bin_dyn") {
     alpha <- init$alpha
@@ -198,9 +235,9 @@ pgIRT <- function(data, prior = NULL, init = NULL, constraint = NULL, model = c(
       if (g == 1) theta_old[is.na(theta)] <- NA
       
       # Convergence check
-      theta_cor <- cor(na.omit(as.numeric(theta_old)), na.omit(as.numeric(theta)))
-      alpha_cor <- cor(alpha_old, alpha)
-      beta_cor <- cor(beta_old, beta)
+      theta_cor <- stats::cor(stats::na.omit(as.numeric(theta_old)), stats::na.omit(as.numeric(theta)))
+      alpha_cor <- stats::cor(alpha_old, alpha)
+      beta_cor <- stats::cor(beta_old, beta)
       
       all_cor <- abs(c(theta_cor, alpha_cor, beta_cor))
       names(all_cor) <- c("theta", "alpha", "beta")
@@ -210,34 +247,38 @@ pgIRT <- function(data, prior = NULL, init = NULL, constraint = NULL, model = c(
       
       if (g > 1 & max(1 - all_cor) < tol) {
         if (!is.null(rownames(Y))) rownames(theta) <- rownames(Y)
+        if (!is.null(colnames(Y))) names(alpha) <- names(beta) <- colnames(Y)
+        colnames(theta) <- 0:(ncol(theta) -1)
         parameter <- list(theta = theta, alpha = alpha, beta = beta)
         input <- list(data = data, constraint = constraint, dyn_options = dyn_options)
         control <- list(maxit = maxit, tol = tol, verbose = verbose, std = std)
         L <- list(parameter = parameter, prior = prior, init = init,
-                  input = input, control = control, model = "bin_dyn", 
+                  input = input, control = control, model = "bin_dyn",
                   correlation = dplyr::bind_rows(cor_store), iter = g, converge = TRUE)
-        class(L) <- "pgIRT"
-        cat("Model converged at iteration", g, ":", crayon::yellow(round(proc.time()[3] - stime, 2), "sec\n"))
+        class(L) <- "pgIRT_fit"
+        cat("Model converged at iteration", g, ":", crayon::yellow(round(proc.time()[3] - stime, 1), "sec\n"))
         return(L)
       }
       
       if (g == maxit) {
         if (!is.null(rownames(Y))) rownames(theta) <- rownames(Y)
+        if (!is.null(colnames(Y))) names(alpha) <- names(beta) <- colnames(Y)
+        colnames(theta) <- 0:(ncol(theta) -1)
         parameter <- list(theta = theta, alpha = alpha, beta = beta)
         input <- list(data = data, constraint = constraint, dyn_options = dyn_options)
         control <- list(maxit = maxit, tol = tol, verbose = verbose, std = std)
         L <- list(parameter = parameter, prior = prior, init = init,
                   input = input, control = control, model = "bin_dyn",
                   correlation = dplyr::bind_rows(cor_store), iter = g, converge = FALSE)
-        class(L) <- "pgIRT"
-        warning("Model falied to converge!\n Return the result as it is, but it may be unreliable : total time ", 
-                round(proc.time()[3] - stime, 2), " sec\n")
+        class(L) <- "pgIRT_fit"
+        warning("Model falied to converge!\n Return the result as it is, but it may be unreliable : total time ",
+                round(proc.time()[3] - stime, 1), " sec\n")
         return(L)
       }
       
       if (g %% verbose == 0) {
-        cat("Iteration", g, ": eval =", names(which.max(1 - all_cor)), 
-            max(1 - all_cor), crayon::yellow("elapsed", round(proc.time()[3] - stime, 2), "sec\n"))
+        cat("Iteration", g, ": eval =", names(which.max(1 - all_cor)),
+            max(1 - all_cor), crayon::yellow("elapsed", round(proc.time()[3] - stime, 1), "sec\n"))
       }
     }
   }
@@ -269,11 +310,11 @@ pgIRT <- function(data, prior = NULL, init = NULL, constraint = NULL, model = c(
       beta <- update_beta_mlt(Y1, Y2, omega, alpha, theta, b0, B0)
       
       # Convergence check
-      theta_cor <- cor(theta_old, theta)
-      alpha1_cor <- cor(alpha_old[, 1], alpha[, 1])
-      alpha2_cor <- cor(na.omit(alpha_old[, 2]), na.omit(alpha[, 2]))
-      beta1_cor <- cor(beta_old[, 1], beta[, 1])
-      beta2_cor <- cor(na.omit(beta_old[, 2]), na.omit(beta[, 2]))
+      theta_cor <- stats::cor(theta_old, theta)
+      alpha1_cor <- stats::cor(alpha_old[, 1], alpha[, 1])
+      alpha2_cor <- stats::cor(stats::na.omit(alpha_old[, 2]), stats::na.omit(alpha[, 2]))
+      beta1_cor <- stats::cor(beta_old[, 1], beta[, 1])
+      beta2_cor <- stats::cor(stats::na.omit(beta_old[, 2]), stats::na.omit(beta[, 2]))
       
       all_cor <- abs(c(theta_cor, alpha1_cor, alpha2_cor, beta1_cor, beta2_cor))
       names(all_cor) <- c("theta", "alpha1", "alpha2", "beta1", "beta2")
@@ -283,34 +324,40 @@ pgIRT <- function(data, prior = NULL, init = NULL, constraint = NULL, model = c(
       
       if (g > 1 & max(1 - all_cor) < tol) {
         if (!is.null(rownames(Y1))) names(theta) <- rownames(Y1)
+        if (!is.null(colnames(Y1))) rownames(alpha) <- rownames(beta) <- colnames(Y1)
+        colnames(alpha) <- c('alpha1', 'alpha2')
+        colnames(beta) <- c('beta1', 'beta2')
         parameter <- list(theta = theta, alpha = alpha, beta = beta)
         input <- list(data = data, constraint = constraint)
         control <- list(maxit = maxit, tol = tol, verbose = verbose, std = std)
         L <- list(parameter = parameter, prior = prior, init = init,
                   input = input, control = control, model = "multi",
                   correlation = dplyr::bind_rows(cor_store), iter = g, converge = TRUE)
-        class(L) <- "pgIRT"
-        cat("Model converged at iteration", g, ":", crayon::yellow(round(proc.time()[3] - stime, 2), "sec\n"))
+        class(L) <- "pgIRT_fit"
+        cat("Model converged at iteration", g, ":", crayon::yellow(round(proc.time()[3] - stime, 1), "sec\n"))
         return(L)
       }
       
       if (g == maxit) {
         if (!is.null(rownames(Y1))) names(theta) <- rownames(Y1)
+        if (!is.null(colnames(Y1))) rownames(alpha) <- rownames(beta) <- colnames(Y1)
+        colnames(alpha) <- c('alpha1', 'alpha2')
+        colnames(beta) <- c('beta1', 'beta2')
         parameter <- list(theta = theta, alpha = alpha, beta = beta)
         input <- list(data = data, constraint = constraint)
         control <- list(maxit = maxit, tol = tol, verbose = verbose, std = std)
         L <- list(parameter = parameter, prior = prior, init = init,
                   input = input, control = control, model = "multi",
                   correlation = dplyr::bind_rows(cor_store), iter = g, converge = FALSE)
-        class(L) <- "pgIRT"
-        warning("Model falied to converge!\n Return the result as it is, but it may be unreliable : total time ", 
-                round(proc.time()[3] - stime, 2), " sec\n")
+        class(L) <- "pgIRT_fit"
+        warning("Model falied to converge!\n Return the result as it is, but it may be unreliable : total time ",
+                round(proc.time()[3] - stime, 1), " sec\n")
         return(L)
       }
       
       if (g %% verbose == 0) {
-        cat("Iteration", g, ": eval =", names(which.max(1 - all_cor)), 
-            max(1 - all_cor), crayon::yellow("elapsed", round(proc.time()[3] - stime, 2), "sec\n"))
+        cat("Iteration", g, ": eval =", names(which.max(1 - all_cor)),
+            max(1 - all_cor), crayon::yellow("elapsed", round(proc.time()[3] - stime, 1), "sec\n"))
       }
     }
   }
@@ -338,7 +385,7 @@ pgIRT <- function(data, prior = NULL, init = NULL, constraint = NULL, model = c(
       
       # Mstep
       theta <- update_theta_mlt_dyn(Y1, Y2, omega, alpha_old, beta_old, theta0, Delta0, Delta, constraint,
-                                    is_const, 
+                                    is_const,
                                     session_individual, bill_session, max_cat, num_cat)
       if (std) {
         theta <- apply(theta, 2, scale)
@@ -348,11 +395,11 @@ pgIRT <- function(data, prior = NULL, init = NULL, constraint = NULL, model = c(
       
       # Convergence check
       if (g == 1) theta_old[is.na(theta)] <- NA
-      theta_cor <- cor(na.omit(as.numeric(theta_old)), na.omit(as.numeric(theta)))
-      alpha1_cor <- cor(alpha_old[, 1], alpha[, 1])
-      alpha2_cor <- cor(na.omit(alpha_old[, 2]), na.omit(alpha[, 2]))
-      beta1_cor <- cor(beta_old[, 1], beta[, 1])
-      beta2_cor <- cor(na.omit(beta_old[, 2]), na.omit(beta[, 2]))
+      theta_cor <- stats::cor(stats::na.omit(as.numeric(theta_old)), stats::na.omit(as.numeric(theta)))
+      alpha1_cor <- stats::cor(alpha_old[, 1], alpha[, 1])
+      alpha2_cor <- stats::cor(stats::na.omit(alpha_old[, 2]), stats::na.omit(alpha[, 2]))
+      beta1_cor <- stats::cor(beta_old[, 1], beta[, 1])
+      beta2_cor <- stats::cor(stats::na.omit(beta_old[, 2]), stats::na.omit(beta[, 2]))
       
       all_cor <- abs(c(theta_cor, alpha1_cor, alpha2_cor, beta1_cor, beta2_cor))
       names(all_cor) <- c("theta", "alpha1", "alpha2", "beta1", "beta2")
@@ -362,34 +409,42 @@ pgIRT <- function(data, prior = NULL, init = NULL, constraint = NULL, model = c(
       
       if (g > 1 & max(1 - all_cor) < tol) {
         if (!is.null(rownames(Y1))) rownames(theta) <- rownames(Y1)
+        if (!is.null(colnames(Y1))) rownames(alpha) <- rownames(beta) <- colnames(Y1)
+        colnames(theta) <- 0:(ncol(theta) -1)
+        colnames(alpha) <- c('alpha1', 'alpha2')
+        colnames(beta) <- c('beta1', 'beta2')
         parameter <- list(theta = theta, alpha = alpha, beta = beta)
         input <- list(data = data, constraint = constraint, dyn_options = dyn_options)
         control <- list(maxit = maxit, tol = tol, verbose = verbose, std = std)
         L <- list(parameter = parameter, prior = prior, init = init,
                   input = input, control = control, model = "multi_dyn",
                   correlation = dplyr::bind_rows(cor_store), iter = g, converge = TRUE)
-        class(L) <- "pgIRT"
-        cat("Model converged at iteration", g, ":", crayon::yellow(round(proc.time()[3] - stime, 2), "sec\n"))
+        class(L) <- "pgIRT_fit"
+        cat("Model converged at iteration", g, ":", crayon::yellow(round(proc.time()[3] - stime, 1), "sec\n"))
         return(L)
       }
       
       if (g == maxit) {
         if (!is.null(rownames(Y1))) rownames(theta) <- rownames(Y1)
+        if (!is.null(colnames(Y1))) rownames(alpha) <- rownames(beta) <- colnames(Y1)
+        colnames(theta) <- 0:(ncol(theta) -1)
+        colnames(alpha) <- c('alpha1', 'alpha2')
+        colnames(beta) <- c('beta1', 'beta2')
         parameter <- list(theta = theta, alpha = alpha, beta = beta)
         input <- list(data = data, constraint = constraint, dyn_options = dyn_options)
         control <- list(maxit = maxit, tol = tol, verbose = verbose, std = std)
         L <- list(parameter = parameter, prior = prior, init = init,
                   input = input, control = control, model = "multi_dyn",
                   correlation = dplyr::bind_rows(cor_store), iter = g, converge = FALSE)
-        class(L) <- "pgIRT"
-        warning("Model falied to converge!\n Return the result as it is, but it may be unreliable : total time ", 
-                round(proc.time()[3] - stime, 2), " sec\n")
+        class(L) <- "pgIRT_fit"
+        warning("Model falied to converge!\n Return the result as it is, but it may be unreliable : total time ",
+                round(proc.time()[3] - stime, 1), " sec\n")
         return(L)
       }
       
       if (g %% verbose == 0) {
-        cat("Iteration", g, ": eval =", names(which.max(1 - all_cor)), 
-            max(1 - all_cor), crayon::yellow("elapsed", round(proc.time()[3] - stime, 2), "sec\n"))
+        cat("Iteration", g, ": eval =", names(which.max(1 - all_cor)),
+            max(1 - all_cor), crayon::yellow("elapsed", round(proc.time()[3] - stime, 1), "sec\n"))
       }
     }
   }

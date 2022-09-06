@@ -84,7 +84,7 @@ NumericVector update_alpha_bin_dyn(NumericMatrix Y, NumericMatrix omega,
     
     if (sum(matched_bill) != 0) {
       if (!NumericVector::is_na(matched_bill[j])) {
-        sample(j) = sample(matched_bill[j] - 1);
+        sample(j) = sample(matched_bill[j]);
       }
     }
   }
@@ -227,9 +227,9 @@ NumericMatrix update_alpha_mlt_dyn(NumericMatrix Y1, NumericMatrix Y2,
     sample(j, 1) = mu2;
     
     if (!NumericVector::is_na(matched_bill[j])) {
-      sample(j, 0) = sample(matched_bill[j] - 1, 0);
+      sample(j, 0) = sample(matched_bill[j], 0);
       if (!NumericVector::is_na(sample(j, 1)) & !NumericVector::is_na(sample(matched_bill[j] - 1, 1))) {
-        sample(j, 1) = sample(matched_bill[j] - 1, 1);
+        sample(j, 1) = sample(matched_bill[j], 1);
       }
     }
   }

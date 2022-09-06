@@ -37,6 +37,10 @@ organize_Y <- function(Y1, Y2, Y3) {
     .Call(`_pgIRT_organize_Y`, Y1, Y2, Y3)
 }
 
+set_constraint <- function(theta, constraint) {
+    .Call(`_pgIRT_set_constraint`, theta, constraint)
+}
+
 update_alpha_bin <- function(Y, omega, beta, theta, a0, A0) {
     .Call(`_pgIRT_update_alpha_bin`, Y, omega, beta, theta, a0, A0)
 }

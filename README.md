@@ -8,8 +8,8 @@
 
 `pgIRT` is an **R** package that implements Item Response Theory (IRT)
 model with Polya-Gamma data augmentation and EM Algorithm. The
-implementation includes binary and multinomial along with dynamic IRT
-models. The algorithm here is based on the procedure proposed by
+implementation includes binary and multinomial IRT models along with
+dynamic models. The algorithm here is based on the procedure proposed by
 Goplerud (2019). This package also utilizes the parametric bootstrap
 method proposed by Lewis and Poole (2004) to estimate confidence
 interval.
@@ -52,7 +52,7 @@ fit <- pgIRT(mat,
 ## Iteration 20 : eval = alpha 2.480436e-05 elapsed 0.1 sec
 ## Iteration 40 : eval = alpha 4.468147e-06 elapsed 0.1 sec
 ## Iteration 60 : eval = alpha 1.615617e-06 elapsed 0.2 sec
-## Model converged at iteration 72 : 0.3 sec
+## Model converged at iteration 72 : 0.2 sec
 
 summary(fit, parameter = "theta")
 ## =============== Parameter = theta =============== 
@@ -148,8 +148,8 @@ boot <- pgIRT_boot(fit_dyn, boot = 100, verbose = 20)
 ## ================================================================
 ## Boostrap 20 DONE : 0.7 sec
 ## Boostrap 40 DONE : 1.3 sec
-## Boostrap 60 DONE : 2 sec
-## Boostrap 80 DONE : 2.7 sec
+## Boostrap 60 DONE : 1.9 sec
+## Boostrap 80 DONE : 2.6 sec
 ## Boostrap 100 DONE : 3.3 sec
 
 summary(boot, parameter = "theta", ci = .95)
@@ -282,11 +282,11 @@ boot_mlt_d <- pgIRT_boot(fit_mlt_d, boot = 100, verbose = 20)
 ## ================================================================
 ## Parametric Bootstrap for pgIRT ( Dynamic Multinomial )
 ## ================================================================
-## Boostrap 20 DONE : 3.9 sec
-## Boostrap 40 DONE : 7.6 sec
-## Boostrap 60 DONE : 11.3 sec
-## Boostrap 80 DONE : 14.9 sec
-## Boostrap 100 DONE : 18.5 sec
+## Boostrap 20 DONE : 3.7 sec
+## Boostrap 40 DONE : 7.4 sec
+## Boostrap 60 DONE : 11 sec
+## Boostrap 80 DONE : 14.7 sec
+## Boostrap 100 DONE : 18.4 sec
 
 summary(boot_mlt_d, parameter = "theta", ci = .99)
 ## ==================== Parameter = theta ==================== 

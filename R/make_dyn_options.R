@@ -2,7 +2,7 @@
 #' @description \code{make_dyn_options} is an auxiliary function for dynamic pgIRT model and generates options for such models.
 #'
 #' @param dataframe data.frame, tbl_df or matrix object, dataframe (long-format, i.e. voter-bill unit) of voting data.
-#' @param unit_id a string, column name which indicates voters. Integer or numeric column is highly recommended.
+#' @param unit_id a string, column name which indicates voters. Integer or numeric column is allowed.
 #' @param bill_id a string, column name which indicates bills. Only integer or numeric column is allowed.
 #' @param time_id a string, column name which indicates sessions. Only integer or numeric column is allowed.
 #' @param vote_col a string, column name which indicates the votes. Only integer or numeric column is allowed.
@@ -86,7 +86,7 @@ make_dyn_options <- function(dataframe,
     dplyr::arrange(!!unit_id) %>%
     dplyr::select(!!time_id, !!unit_id) %>%
     as.matrix()
-  tmp1[, 1] <- tmp1[, 1] - min(tmp1[, 1])
+  tmp1[, 1] <- as.numeric(tmp1[, 1]) - as.numeric(min(tmp1[, 1]))
   
   tmp2 <- dataframe %>%
     dplyr::mutate(time := !!time_id - min(!!time_id)) %>%

@@ -15,7 +15,7 @@ make_rollcall(
 \arguments{
 \item{dataframe}{data.frame, tbl_df or matrix object, dataframe (long-format, i.e. voter-bill unit) of voting data.}
 
-\item{unit_id}{a string, column name which indicates voters. Integer or numeric column is highly recommended.}
+\item{unit_id}{a string, column name which indicates voters. Integer or numeric column is allowed.}
 
 \item{bill_id}{a string, column name which indicates bills. Only integer or numeric column is allowed.}
 

@@ -2,7 +2,7 @@
 #' @description \code{make_rolllcall} is an auxiliary function for pgIRT model and generates roll-call matrix from long-dataframe.
 #' 
 #' @param dataframe data.frame, tbl_df or matrix object, dataframe (long-format, i.e. voter-bill unit) of voting data.
-#' @param unit_id a string, column name which indicates voters. Integer or numeric column is highly recommended.
+#' @param unit_id a string, column name which indicates voters. Integer or numeric column is allowed.
 #' @param bill_id a string, column name which indicates bills. Only integer or numeric column is allowed.
 #' @param vote_col a string, column name which indicates the votes. Only integer or numeric column is allowed.
 #' @param drop_unanimous a bool, whether removing unanimous bills or not. Default is FALSE.
@@ -54,14 +54,13 @@ make_rollcall <- function(dataframe,
       num_cat <- num_cat[which(!names(num_cat) %in% drop_res)]
       max_cat <- max_cat[which(!names(max_cat) %in% drop_res)]
     }
-
-    no_attend <- which(apply(temp, 1, function(x) all(is.na(x))))
-    if (length(no_attend) != 0) {
-      cat("Remove some units who have no voting record:", no_attend, "\n")
-      temp <- temp[-no_attend, ]
-      rname <- rname[-no_attend]
-      rownames(temp) <- rname
-    }
+  }
+  no_attend <- which(apply(temp, 1, function(x) all(is.na(x))))
+  if (length(no_attend) != 0) {
+    cat("Remove some units who have no voting record:", no_attend, "\n")
+    temp <- temp[-no_attend, ]
+    rname <- rname[-no_attend]
+    rownames(temp) <- rname
   }
   temp <- temp[, (apply(temp, 2, function(x) min(x, na.rm = TRUE) == 1) | apply(temp, 2, function(x) min(x, na.rm = TRUE) == 0))]
   return(temp)

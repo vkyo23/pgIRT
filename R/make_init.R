@@ -43,7 +43,7 @@ make_init <- function(data,
     ALLPOINT <- sum(is.na(data)) + sum(data == 1, na.rm = TRUE) + sum(data == 0, na.rm = TRUE)
     if (ALLPOINT != I * J) stop("For binomial model, the data is allowed to contain only NA, 1 and 0.")
     
-    theta_init <- scale(rowMeans(data, na.rm = TRUE))[, 1]
+    theta_init <- theta_ini <- scale(rowMeans(data, na.rm = TRUE))[, 1]
     if (model == "bin_dyn") {
       if (is.null(T)) stop("Please supply `T`!")
       theta_init <- matrix(rep(theta_init, T), ncol = T)
@@ -63,15 +63,11 @@ make_init <- function(data,
     
     alpha_init <- beta_init <- rep()
     for (j in 1:ncol(data)) {
-      c <- stats::coef(stats::glm(data[, j] ~ theta_init, family = "binomial")) %>%
+      c <- stats::coef(stats::glm(data[, j] ~ theta_ini, family = "binomial")) %>%
         suppressWarnings()
       c <- ifelse(is.na(c) | abs(c) > 5, .1, c)
       alpha_init[j] <- c[1]
       beta_init[j] <- c[2]
-    }
-    if (model == "bin_dyn") {
-      if (is.null(T)) stop("Please supply `T`!")
-      theta_init <- matrix(rep(theta_init, T), ncol = T)
     }
     tmp <- list(alpha = alpha_init, beta = beta_init, theta = theta_init)
   }

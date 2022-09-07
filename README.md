@@ -1,27 +1,63 @@
 
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
 # pgIRT
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-Item Response Theory model with Polya-Gamma data augmentation and EM Algorithm.
+`pgIRT` is a **R** package that implements Item Response Theory (IRT)
+model with Polya-Gamma data augmentation and EM Algorithm.
+Implementation includes binary, multinomial along with dynamic IRT
+models. The algorithm here is based on the procedure proposed by
+Goplerud (2019). This package also utilizes the parametric bootstrap
+method proposed by Lewis and Poole (2004) to estimate statistical
+uncertainty.
 
 ## Installation
 
-You can install the released version of pgIRT from [GitHub](https://github.com) with:
+You can install the released version of pgIRT from
+[GitHub](https://github.com) with:
 
 ``` r
 remotes::install_github("vkyo23/pgIRT")
 ```
 
+## Usage
+
+### Binary IRT
+
+Using `Senate` data from `MCMCpack`.
+
+``` r
+library(pgIRT)
+require(dplyr)
+
+data(Senate, package = "MCMCpack")
+mat <- as.matrix(Senate[, 6:ncol(Senate)])
+colnames(mat) <- 1:ncol(mat)
+rownames(mat) <- 1:nrow(mat)
+
+# Auxiliary function for setting initial values
+init <- make_init(mat, model = "bin", constraint = constraint)
+
+fit <- pgIRT(mat, 
+             model = "bin",
+             init = init,
+             verbose = 10)
+summary(fit)
+```
+
+### Dynamic binary IRT
+
+### Multinomial IRT
+
+### Dynamic multinomial IRT
+
 ## References
 
-The algorithm here is based on the procedure proposed by Goplerud (2019). This package also utilizes the parametric bootstrap method proposed by Lewis and Poole (2004) to estimate statistical uncertainty.   
-
-- Goplerud, M. (2019). "A Multinomial Framework for Ideal Point Estimation". *Political Analysis*, 27(1), 69-89.
-- Lewis, J. B., & Poole, K. T. (2004). "Measuring bias and uncertainty in ideal point estimates via the parametric bootstrap". *Political Analysis*, 12(2), 105-127.
-
-
-
-
-
+-   Goplerud, M. (2019). “A Multinomial Framework for Ideal Point
+    Estimation”. *Political Analysis*, 27(1), 69-89.
+-   Lewis, J. B., & Poole, K. T. (2004). “Measuring bias and uncertainty
+    in ideal point estimates via the parametric bootstrap”. *Political
+    Analysis*, 12(2), 105-127.

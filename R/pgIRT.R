@@ -5,22 +5,22 @@
 #' @param model a string, one of "bin" (binary), "bin_dyn" (dynamic binary), "multi" (multinomial) or "multi_dyn" (dynamic multinomial)
 #' @param prior a list, containing prior distribution:
 #' \itemize{
-#'   \item \code{a0} a double ("bin", "bin_dyn")  or 2-length vector ("multi", "multi_dyn"), prior mean of alpha. Default is 0 ("bin", "bin_dyn"), c(0, 0) ("multi", "multi_dyn").
-#'   \item \code{A0} a double ("bin", "bin_dyn") or 2-length vector ("multi", "multi_dyn"), prior variance of alpha. Default is 25 ("bin", "bin_dyn"), c(25, 25) ("multi", "multi_dyn").
-#'   \item \code{b0} a double ("bin", "bin_dyn") or 2-length vector ("multi", "multi_dyn"), prior mean of beta Default is 0 ("bin", "bin_dyn"), c(0, 0) ("multi", "multi_dyn").
-#'   \item \code{B0} a double ("bin", "bin_dyn") or 2-length vector ("multi", "multi_dyn"), prior variance of beta. Default is 25 ("bin", "bin_dyn"), c(25, 25) ("multi", "multi_dyn").
-#'   \item \code{theta0} a numeric vector (I length), prior mean of theta_i0 for dynamic model ("bin_dyn", "multi_dyn"). Default is \code{rep(0, I)}. 
-#'   \item \code{Delta0} a numeric vector (I length), prior variance of theta_i0 for dynamic model ("bin_dyn", "multi_dyn"). Default is \code{rep(1, I)}.
-#'   \item \code{Delta} a double, prior evolution variance of theta_it for dynamic model ("bin_dyn", "multi_dyn"). Default is 0.01.
+#'   \item \code{a0} a double (\code{bin}, \code{bin_dyn})  or 2-length vector (\code{multi}, \code{multi_dyn}), prior mean of alpha. Default is 0 (\code{bin}, \code{bin_dyn}), c(0, 0) (\code{multi}, \code{multi_dyn}).
+#'   \item \code{A0} a double (\code{bin}, \code{bin_dyn}) or 2-length vector (\code{multi}, \code{multi_dyn}), prior variance of alpha. Default is 25 (\code{bin}, \code{bin_dyn}), c(25, 25) (\code{multi}, \code{multi_dyn}).
+#'   \item \code{b0} a double (\code{bin}, \code{bin_dyn}) or 2-length vector (\code{multi}, \code{multi_dyn}), prior mean of beta Default is 0 (\code{bin}, \code{bin_dyn}), c(0, 0) (\code{multi}, \code{multi_dyn}).
+#'   \item \code{B0} a double (\code{bin}, \code{bin_dyn}) or 2-length vector (\code{multi}, \code{multi_dyn}), prior variance of beta. Default is 25 (\code{bin}, \code{bin_dyn}), c(25, 25) (\code{multi}, \code{multi_dyn}).
+#'   \item \code{theta0} a numeric vector (I length), prior mean of theta_i0 for dynamic model (\code{bin_dyn}, \code{multi_dyn}). Default is \code{rep(0, I)}. 
+#'   \item \code{Delta0} a numeric vector (I length), prior variance of theta_i0 for dynamic model (\code{bin_dyn}, \code{multi_dyn}). Default is \code{rep(1, I)}.
+#'   \item \code{Delta} a double, prior evolution variance of theta_it for dynamic model (\code{bin_dyn}, \code{multi_dyn}). Default is 0.01.
 #' }
 #' @param init a list, containing initial values (strongly recommended to use \link{make_init}):
 #' \itemize{
-#'   \item \code{alpha} J length vector of alpha for "bin" and "bin_dyn" model. J x 2 matrix for "multi" and "multi_dyn".
-#'   \item \code{beta} J length vector of beta for "bin" and "bin_dyn" model. J x 2 matrix for "multi" and "multi_dyn".
-#'   \item \code{theta} I length vector of theta for "bin" and "multi" model. I x T (sessions) matrix for "bin_dyn" and "multi_dyn".
+#'   \item \code{alpha} J length vector of alpha for \code{bin} and \code{bin_dyn} model. J x 2 matrix for \code{multi} and \code{multi_dyn}.
+#'   \item \code{beta} J length vector of beta for \code{bin} and \code{bin_dyn} model. J x 2 matrix for \code{multi} and \code{multi_dyn}.
+#'   \item \code{theta} I length vector of theta for \code{bin} and \code{multi} model. I x T (sessions) matrix for \code{bin_dyn} and \code{multi_dyn}.
 #' }
 #' @param constraint an integer or integer vector (for dynamic model, the same length as the number of sessions), indicating the voter whose ideal point is always set positive.
-#' @param dyn_options a list, containing the options for dynamic model. If you choose "bin_dyn" or "multi_dyn" for `model`, you must supply this argument. Using \link{make_dyn_options}() is strongly recommended:
+#' @param dyn_options a list, containing the options for dynamic model. If you choose \code{bin_dyn} or \code{multi_dyn} for `model`, you must supply this argument. Using \link{make_dyn_options}() is strongly recommended:
 #' \itemize{
 #'   \item \code{session_individual} a matrix, the first column contains attending sessions (starts from 0) of individuals and 
 #'   the second column contains the identifiers of individuals.
@@ -366,7 +366,7 @@ pgIRT <- function(data,
     alpha <- init$alpha
     beta <- init$beta
     theta <- init$theta
-    if (is.null(constraint)) constraint <- rep(which.max(theta[, 1]), I)
+    if (is.null(constraint)) constraint <- rep(which.max(theta[, 1]), length(unique(bill_session)))
     a0 <- prior$a0
     A0 <- prior$A0
     b0 <- prior$b0

@@ -34,7 +34,10 @@ print.summary.pgIRT_boot <- function(object) {
 #' @importFrom dplyr %>% mutate select as_tibble rename tibble filter bind_rows
 #' @importFrom tidyr pivot_longer
 #' @export
-summary.pgIRT_fit <- function(fit, parameter = c('alpha', 'beta', 'theta')) {
+summary.pgIRT_fit <- function(fit, 
+                              parameter = c('alpha', 'beta', 'theta')
+) {
+  
   if (fit$model %in% c('bin', 'multi')) {
     item <- dplyr::tibble(variable = NA, bill_id = NA, estimate = NA)
     ind <- dplyr::tibble(variable = NA, unit_id = NA, estimate = NA)
@@ -59,7 +62,7 @@ summary.pgIRT_fit <- function(fit, parameter = c('alpha', 'beta', 'theta')) {
     if (fit$model %in% c('bin_dyn', 'multi_dyn')) {
       bill_session <- fit$input$dyn_options$bill_session
       al <- al %>% 
-        dplyr::mutate(session = bill_session)
+        dplyr::mutate(session = bill_session + 1)
     }
     
     if (fit$model == 'multi_dyn') {
@@ -72,8 +75,8 @@ summary.pgIRT_fit <- function(fit, parameter = c('alpha', 'beta', 'theta')) {
       item <- dplyr::bind_rows(item, al1, al2)
     } else if (fit$model == 'bin_dyn') {
       al <- al %>% 
-        dplyr::mutate(variable = 'alpha', bill_id = bill_id, session, .before = V1) %>% 
-        dplyr::rename(estimate = V1)
+        dplyr::mutate(variable = 'alpha', bill_id = bill_id, session, .before = value) %>% 
+        dplyr::rename(estimate = value)
       item <- dplyr::bind_rows(item, al)
     } else if (fit$model == 'multi') {
       al1 <- al[, 1] %>% 
@@ -85,8 +88,8 @@ summary.pgIRT_fit <- function(fit, parameter = c('alpha', 'beta', 'theta')) {
       item <- dplyr::bind_rows(item, al1, al2)
     } else if (fit$model == 'bin') {
       al <- al %>% 
-        dplyr::mutate(variable = 'alpha', bill_id = bill_id, .before = V1) %>% 
-        dplyr::rename(estimate = V1)
+        dplyr::mutate(variable = 'alpha', bill_id = bill_id, .before = value) %>% 
+        dplyr::rename(estimate = value)
       item <- dplyr::bind_rows(item, al)
     }
   } 
@@ -105,7 +108,7 @@ summary.pgIRT_fit <- function(fit, parameter = c('alpha', 'beta', 'theta')) {
     if (fit$model %in% c('bin_dyn', 'multi_dyn')) {
       bill_session <- fit$input$dyn_options$bill_session
       be <- be %>% 
-        dplyr::mutate(session = bill_session)
+        dplyr::mutate(session = bill_session + 1)
     }
     
     if (fit$model == 'multi_dyn') {
@@ -118,8 +121,8 @@ summary.pgIRT_fit <- function(fit, parameter = c('alpha', 'beta', 'theta')) {
       item <- dplyr::bind_rows(item, be1, be2)
     } else if (fit$model == 'bin_dyn') {
       be <- be %>% 
-        dplyr::mutate(variable = 'beta', bill_id = bill_id, session, .before = V1) %>% 
-        dplyr::rename(estimate = V1)
+        dplyr::mutate(variable = 'beta', bill_id = bill_id, session, .before = value) %>% 
+        dplyr::rename(estimate = value)
       item <- dplyr::bind_rows(item, be)
     } else if (fit$model == 'multi') {
       be1 <- be[, 1] %>% 
@@ -131,8 +134,8 @@ summary.pgIRT_fit <- function(fit, parameter = c('alpha', 'beta', 'theta')) {
       item <- dplyr::bind_rows(item, be1, be2)
     } else if (fit$model == 'bin') {
       be <- be %>% 
-        dplyr::mutate(variable = 'beta', bill_id = bill_id, .before = V1) %>% 
-        dplyr::rename(estimate = V1)
+        dplyr::mutate(variable = 'beta', bill_id = bill_id, .before = value) %>% 
+        dplyr::rename(estimate = value)
       item <- dplyr::bind_rows(item, be)
     }
   } 
@@ -141,16 +144,17 @@ summary.pgIRT_fit <- function(fit, parameter = c('alpha', 'beta', 'theta')) {
     th <- fit$parameter$theta
     if (fit$model %in% c('bin', 'multi')) {
       unit_id <- names(th)
-      th <- dplyr::tibble(variable = 'theta', unit_id = unit_id, estimate = th)
+      th <- dplyr::tibble(variable = 'theta', unit_id = as.numeric(unit_id), estimate = th)
     } else {
       unit_id <- rownames(th)
       th <- th %>% 
         dplyr::as_tibble() %>% 
         suppressWarnings() %>% 
-        dplyr::mutate(unit_id = unit_id) %>% 
+        dplyr::mutate(unit_id = as.numeric(unit_id)) %>% 
         tidyr::pivot_longer(-unit_id) %>% 
         dplyr::rename(session = name, estimate = value) %>% 
-        dplyr::mutate(variable = 'theta', session = as.numeric(session)) %>% 
+        dplyr::mutate(variable = 'theta', session = as.numeric(session) + 1,
+                      unit_id = as.numeric(unit_id)) %>% 
         dplyr::select(variable, unit_id, session, estimate)
     }
     ind <- dplyr::bind_rows(ind, th)
@@ -180,7 +184,10 @@ summary.pgIRT_fit <- function(fit, parameter = c('alpha', 'beta', 'theta')) {
 #' @importFrom tidyr pivot_longer
 #' @importFrom stats quantile
 #' @export
-summary.pgIRT_boot <- function(boot_fit, parameter = c('alpha', 'beta', 'theta'), ci = 0.95) {
+summary.pgIRT_boot <- function(boot_fit, 
+                               parameter = c('alpha', 'beta', 'theta'), 
+                               ci = 0.95) {
+  
   if (ci > 1) stop('CI should be smaller than 1.')
   lwr_q <- (1 - ci) / 2
   upr_q <- 1 - (1 - ci) / 2
@@ -209,9 +216,9 @@ summary.pgIRT_boot <- function(boot_fit, parameter = c('alpha', 'beta', 'theta')
       tmp <- dplyr::tibble(variable = 'alpha', bill_id, ci = stat_name, estimate = boot_fit$input$parameter$alpha, 
                            lwr = al_lwr, upr = al_upr)
       if (boot_fit$input$model == 'bin_dyn') {
-        session <- boot_fit$input$input$dyn_options$bill_session
+        session <- boot_fit$input$input$dyn_options$bill_session + 1
         tmp <- tmp %>% 
-          dplyr::mutate(session = session, .before = stat)
+          dplyr::mutate(session = session, .before = ci)
       }
       item <- dplyr::bind_rows(item, tmp)
     } else {
@@ -234,7 +241,7 @@ summary.pgIRT_boot <- function(boot_fit, parameter = c('alpha', 'beta', 'theta')
       tmp2 <- dplyr::tibble(variable = 'alpha2', bill_id, ci = stat_name, estimate = boot_fit$input$parameter$alpha[, 2],
                             lwr = al2_lwr, upr = al2_upr)
       if (boot_fit$input$model == 'multi_dyn') {
-        ses <- boot_fit$input$input$dyn_options$bill_session
+        ses <- boot_fit$input$input$dyn_options$bill_session + 1
         tmp <- tmp %>% 
           dplyr::mutate(session = ses, .before = ci)
         tmp2 <- tmp2 %>% 
@@ -259,9 +266,9 @@ summary.pgIRT_boot <- function(boot_fit, parameter = c('alpha', 'beta', 'theta')
       tmp <- dplyr::tibble(variable = 'beta', bill_id, ci = stat_name, estimate = boot_fit$input$parameter$beta, 
                            lwr = be_lwr, upr = be_upr)
       if (boot_fit$input$model == 'bin_dyn') {
-        session <- boot_fit$input$input$dyn_options$bill_session
+        session <- boot_fit$input$input$dyn_options$bill_session + 1
         tmp <- tmp %>% 
-          dplyr::mutate(session = session, .before = stat)
+          dplyr::mutate(session = session, .before = ci)
       }
       item <- dplyr::bind_rows(item, tmp)
     } else {
@@ -284,7 +291,7 @@ summary.pgIRT_boot <- function(boot_fit, parameter = c('alpha', 'beta', 'theta')
       tmp2 <- dplyr::tibble(variable = 'beta2', bill_id, ci = stat_name, estimate = boot_fit$input$parameter$beta[, 2],
                             lwr = be2_lwr, upr = be2_upr)
       if (boot_fit$input$model == 'multi_dyn') {
-        ses <- boot_fit$input$input$dyn_options$bill_session
+        ses <- boot_fit$input$input$dyn_options$bill_session + 1
         tmp <- tmp %>% 
           dplyr::mutate(session = ses, .before = ci)
         tmp2 <- tmp2 %>% 
@@ -298,7 +305,7 @@ summary.pgIRT_boot <- function(boot_fit, parameter = c('alpha', 'beta', 'theta')
     is_ind <- TRUE
     if (boot_fit$input$model %in% c('bin', 'multi')) {
       th_store <- rep()
-      uid <- names(boot_fit$theta[[1]])
+      uid <- names(boot_fit$input$parameter$theta) %>% as.numeric()
       for (b in 1:length(boot_fit$theta)) {
         th_store <- cbind(th_store, boot_fit$theta[[b]])
       }
@@ -311,8 +318,7 @@ summary.pgIRT_boot <- function(boot_fit, parameter = c('alpha', 'beta', 'theta')
     } else {
       for (i in 1:nrow(boot_fit$input$parameter$theta)) {
         th_store <- rep()
-        uid <- rownames(boot_fit$theta[[1]])[i]
-        sid <- names(boot_fit$theta[[1]][i, ])[which(!is.na(boot_fit$theta[[1]][i, ]))] %>% as.numeric()
+        uid <- rownames(boot_fit$theta[[1]])[i] %>% as.numeric()
         for (b in 1:length(boot_fit$theta)) {
           th_store <- cbind(th_store, boot_fit$theta[[b]][i, ])
         }
@@ -320,7 +326,7 @@ summary.pgIRT_boot <- function(boot_fit, parameter = c('alpha', 'beta', 'theta')
         th_lwr <- apply(th_store, 1, stats::quantile, probs = lwr_q, na.rm = TRUE) + th_bias
         th_upr <- apply(th_store, 1, stats::quantile, probs = upr_q, na.rm = TRUE) + th_bias
         ind <- dplyr::bind_rows(ind,
-                                dplyr::tibble(variable = 'theta', unit_id = uid, session = 0:(length(th_upr) - 1), ci = stat_name,
+                                dplyr::tibble(variable = 'theta', unit_id = uid, session = 1:length(th_upr), ci = stat_name,
                                               estimate = boot_fit$input$parameter$theta[i, ], lwr = th_lwr, upr = th_upr))
       }
     }

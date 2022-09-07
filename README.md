@@ -6,7 +6,7 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-`pgIRT` is a **R** package that implements Item Response Theory (IRT)
+`pgIRT` is an **R** package that implements Item Response Theory (IRT)
 model with Polya-Gamma data augmentation and EM Algorithm.
 Implementation includes binary, multinomial along with dynamic IRT
 models. The algorithm here is based on the procedure proposed by
@@ -37,15 +37,6 @@ data(Senate, package = "MCMCpack")
 mat <- as.matrix(Senate[, 6:ncol(Senate)])
 colnames(mat) <- 1:ncol(mat)
 rownames(mat) <- 1:nrow(mat)
-
-# Auxiliary function for setting initial values
-init <- make_init(mat, model = "bin", constraint = constraint)
-
-fit <- pgIRT(mat, 
-             model = "bin",
-             init = init,
-             verbose = 10)
-summary(fit)
 ```
 
 ### Dynamic binary IRT

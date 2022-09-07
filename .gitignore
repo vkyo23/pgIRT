@@ -2,6 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+.html
 check.R
 src/*.o
 src/*.so

@@ -7,10 +7,11 @@ Author: Ukyo Kanetaka
 Maintainer: Ukyo Kanetaka <u.kanetaka@gmail.com>
 Description: This package implements fast IRT model with Polya-Gamma data augmentation and EM Algorithm.
 License: MIT + file LICENSE
+Depends:
+    Rcpp
 Imports: 
     crayon,
     dplyr,
-    Rcpp,
     rlang,
     stats,
     tidyr

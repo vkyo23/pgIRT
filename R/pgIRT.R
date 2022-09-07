@@ -88,7 +88,7 @@ pgIRT <- function(data,
   if (length(model) > 1) stop("Please specify `model` argument. Only one of 'bin', 'bin_dyn', 'multi' or 'multi_dyn' is allowed.")
   
   if (model %in% c("multi", "multi_dyn")) {
-    md <- "Multinomial (Stick-Breaking)"
+    md <- "Multinomial"
     ALLPOINT <- sum(is.na(data)) + sum(data == 1, na.rm = TRUE) + sum(data == 2, na.rm = TRUE) + sum(data == 3, na.rm = TRUE)
     if (ALLPOINT != I * J) stop("For multinomial model, the data is allowed to contain only NA, 1, 2 and 3.")
     Y1 <- Y2 <- data
@@ -100,7 +100,7 @@ pgIRT <- function(data,
   } else if (model %in% c("bin", "bin_dyn")) {
     md <- "Binomial"
     ALLPOINT <- sum(is.na(data)) + sum(data == 1, na.rm = TRUE) + sum(data == 0, na.rm = TRUE)
-    if (ALLPOINT != I * J) stop("For binomial model, the data is allowed to contain only NA, 1 and 0.")
+    if (ALLPOINT != I * J) stop("For binary model, the data is allowed to contain only NA, 1 and 0.")
     Y <- data
   }
   if (model %in% c("bin_dyn", "multi_dyn")) {

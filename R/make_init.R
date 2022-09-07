@@ -41,7 +41,7 @@ make_init <- function(data,
   
   if (model %in% c("bin", "bin_dyn")) {
     ALLPOINT <- sum(is.na(data)) + sum(data == 1, na.rm = TRUE) + sum(data == 0, na.rm = TRUE)
-    if (ALLPOINT != I * J) stop("For binomial model, the data is allowed to contain only NA, 1 and 0.")
+    if (ALLPOINT != I * J) stop("For binary model, the data is allowed to contain only NA, 1 and 0.")
     
     theta_init <- theta_ini <- scale(rowMeans(data, na.rm = TRUE))[, 1]
     if (model == "bin_dyn") {

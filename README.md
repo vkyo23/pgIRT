@@ -11,8 +11,8 @@ model with Polya-Gamma data augmentation and EM Algorithm.
 Implementation includes binary, multinomial along with dynamic IRT
 models. The algorithm here is based on the procedure proposed by
 Goplerud (2019). This package also utilizes the parametric bootstrap
-method proposed by Lewis and Poole (2004) to estimate statistical
-uncertainty.
+method proposed by Lewis and Poole (2004) to estimate confidence
+interval.
 
 ## Installation
 
@@ -50,9 +50,9 @@ fit <- pgIRT(mat,
 ## Model = Binomial 
 ## =========================================================================
 ## Iteration 20 : eval = alpha 2.480436e-05 elapsed 0.1 sec
-## Iteration 40 : eval = alpha 4.468147e-06 elapsed 0.2 sec
+## Iteration 40 : eval = alpha 4.468147e-06 elapsed 0.1 sec
 ## Iteration 60 : eval = alpha 1.615617e-06 elapsed 0.2 sec
-## Model converged at iteration 72 : 0.3 sec
+## Model converged at iteration 72 : 0.2 sec
 
 summary(fit, parameter = "theta")
 ## =============== Parameter = theta =============== 
@@ -147,10 +147,10 @@ boot <- pgIRT_boot(fit_dyn, boot = 100, verbose = 20)
 ## Parametric Bootstrap for pgIRT ( Dynamic Binomial )
 ## ================================================================
 ## Boostrap 20 DONE : 0.7 sec
-## Boostrap 40 DONE : 1.6 sec
-## Boostrap 60 DONE : 2.3 sec
-## Boostrap 80 DONE : 3 sec
-## Boostrap 100 DONE : 3.8 sec
+## Boostrap 40 DONE : 1.3 sec
+## Boostrap 60 DONE : 2 sec
+## Boostrap 80 DONE : 2.6 sec
+## Boostrap 100 DONE : 3.3 sec
 
 summary(boot, parameter = "theta", ci = .95)
 ## ==================== Parameter = theta ==================== 
@@ -186,7 +186,7 @@ fit_mlt <- pgIRT(m_data,
                  verbose = 20)
 ## =========================================================================
 ## Polya-Gamma data augmentation Item Response Theory Model via EM Algorithm
-## Model = Multinomial (Stick-Breaking) 
+## Model = Multinomial 
 ## =========================================================================
 ## Iteration 20 : eval = beta2 0.000277376 elapsed 0 sec
 ## Iteration 40 : eval = beta2 9.464876e-06 elapsed 0 sec
@@ -268,7 +268,7 @@ fit_mlt_d <- pgIRT(m_mlt_d,
                    verbose = 20)
 ## =========================================================================
 ## Polya-Gamma data augmentation Item Response Theory Model via EM Algorithm
-## Model = Dynamic Multinomial (Stick-Breaking) 
+## Model = Dynamic Multinomial 
 ## =========================================================================
 ## Iteration 20 : eval = alpha2 0.0001816278 elapsed 0.1 sec
 ## Iteration 40 : eval = alpha2 2.649164e-06 elapsed 0.2 sec
@@ -282,11 +282,11 @@ boot_mlt_d <- pgIRT_boot(fit_mlt_d, boot = 100, verbose = 20)
 ## ================================================================
 ## Parametric Bootstrap for pgIRT ( Dynamic Multinomial )
 ## ================================================================
-## Boostrap 20 DONE : 4.6 sec
-## Boostrap 40 DONE : 8.7 sec
-## Boostrap 60 DONE : 13 sec
-## Boostrap 80 DONE : 17.1 sec
-## Boostrap 100 DONE : 21.1 sec
+## Boostrap 20 DONE : 3.8 sec
+## Boostrap 40 DONE : 7.6 sec
+## Boostrap 60 DONE : 11.2 sec
+## Boostrap 80 DONE : 14.9 sec
+## Boostrap 100 DONE : 18.6 sec
 
 summary(boot_mlt_d, parameter = "theta", ci = .99)
 ## ==================== Parameter = theta ==================== 

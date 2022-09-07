@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-`pgIRT` is an **R** package that implements Item Response Theory (IRT) model with Polya-Gamma data augmentation and EM Algorithm. Implementation includes binary, multinomial along with dynamic IRT models. The algorithm here is based on the procedure proposed by Goplerud (2019). This package also utilizes the parametric bootstrap method proposed by Lewis and Poole (2004) to estimate statistical uncertainty. 
+`pgIRT` is an **R** package that implements Item Response Theory (IRT) model with Polya-Gamma data augmentation and EM Algorithm. Implementation includes binary, multinomial along with dynamic IRT models. The algorithm here is based on the procedure proposed by Goplerud (2019). This package also utilizes the parametric bootstrap method proposed by Lewis and Poole (2004) to estimate confidence interval.
 
 ## Installation
 

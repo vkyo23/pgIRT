@@ -16,7 +16,7 @@ uncertainty.
 
 ## Installation
 
-You can install the released version of pgIRT from
+You can install the development version of pgIRT from
 [GitHub](https://github.com) with:
 
 ``` r
@@ -50,9 +50,9 @@ fit <- pgIRT(mat,
 ## Model = Binomial 
 ## =========================================================================
 ## Iteration 20 : eval = alpha 2.480436e-05 elapsed 0.1 sec
-## Iteration 40 : eval = alpha 4.468147e-06 elapsed 0.1 sec
+## Iteration 40 : eval = alpha 4.468147e-06 elapsed 0.2 sec
 ## Iteration 60 : eval = alpha 1.615617e-06 elapsed 0.2 sec
-## Model converged at iteration 72 : 0.2 sec
+## Model converged at iteration 72 : 0.3 sec
 
 summary(fit, parameter = "theta")
 ## =============== Parameter = theta =============== 
@@ -147,10 +147,10 @@ boot <- pgIRT_boot(fit_dyn, boot = 100, verbose = 20)
 ## Parametric Bootstrap for pgIRT ( Dynamic Binomial )
 ## ================================================================
 ## Boostrap 20 DONE : 0.7 sec
-## Boostrap 40 DONE : 1.4 sec
-## Boostrap 60 DONE : 2 sec
-## Boostrap 80 DONE : 2.7 sec
-## Boostrap 100 DONE : 3.3 sec
+## Boostrap 40 DONE : 1.6 sec
+## Boostrap 60 DONE : 2.3 sec
+## Boostrap 80 DONE : 3 sec
+## Boostrap 100 DONE : 3.8 sec
 
 summary(boot, parameter = "theta", ci = .95)
 ## ==================== Parameter = theta ==================== 
@@ -282,11 +282,11 @@ boot_mlt_d <- pgIRT_boot(fit_mlt_d, boot = 100, verbose = 20)
 ## ================================================================
 ## Parametric Bootstrap for pgIRT ( Dynamic Multinomial )
 ## ================================================================
-## Boostrap 20 DONE : 3.7 sec
-## Boostrap 40 DONE : 7.5 sec
-## Boostrap 60 DONE : 11.1 sec
-## Boostrap 80 DONE : 14.8 sec
-## Boostrap 100 DONE : 18.5 sec
+## Boostrap 20 DONE : 4.6 sec
+## Boostrap 40 DONE : 8.7 sec
+## Boostrap 60 DONE : 13 sec
+## Boostrap 80 DONE : 17.1 sec
+## Boostrap 100 DONE : 21.1 sec
 
 summary(boot_mlt_d, parameter = "theta", ci = .99)
 ## ==================== Parameter = theta ==================== 

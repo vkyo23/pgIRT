@@ -51,6 +51,7 @@ fit <- pgIRT(mat,
              model = "bin",
              init = init,
              verbose = 20)
+
 summary(fit, parameter = "theta")
 ```
 
@@ -110,6 +111,7 @@ To compute confidence interval, run bootstrap via `pgIRT_boot`:
 ```{r}
 # Bootstrap
 boot <- pgIRT_boot(fit_dyn, boot = 100, verbose = 20)
+
 summary(boot, parameter = "theta", ci = .95)
 ```
 
@@ -128,18 +130,19 @@ fit_mlt <- pgIRT(m_data,
                  init = init_mlt, 
                  constraint = 1,
                  verbose = 20)
+
 summary(fit_mlt, parameter = c("alpha", "beta"))
 ```
 
 
 ### Dynamic multinomial IRT
 
-Using a simulated voting data (long-format dataframe) `m_data_dyn` and a simulated matching bill data for dynamic estimation (See more detail of across time estimation in Bailey (2007)).
+Using a simulated voting data (long-format dataframe) `m_data_dyn` and a simulated matching bill data `sim_match` for dynamic estimation (See more detail of across time estimation in Bailey (2007)).
 
 ```{r}
 # multinomial dynamic
-load("data/m_data_dyn.RData")
-load("data/sim_match.RData")
+data("m_data_dyn")
+data("sim_match")
 
 m_mlt_d <- make_rollcall(m_data_dyn,
                          unit_id = "unit",
@@ -175,6 +178,7 @@ Returning 99% confidence interval:
 
 ```{r}
 boot_mlt_d <- pgIRT_boot(fit_mlt_d, boot = 100, verbose = 20)
+
 summary(boot_mlt_d, parameter = "theta", ci = .99)
 ```
 

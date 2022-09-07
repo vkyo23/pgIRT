@@ -53,6 +53,7 @@ fit <- pgIRT(mat,
 ## Iteration 40 : eval = alpha 4.468147e-06 elapsed 0.1 sec
 ## Iteration 60 : eval = alpha 1.615617e-06 elapsed 0.2 sec
 ## Model converged at iteration 72 : 0.2 sec
+
 summary(fit, parameter = "theta")
 ## =============== Parameter = theta =============== 
 ## # A tibble: 102 x 3
@@ -150,6 +151,7 @@ boot <- pgIRT_boot(fit_dyn, boot = 100, verbose = 20)
 ## Boostrap 60 DONE : 2 sec
 ## Boostrap 80 DONE : 2.7 sec
 ## Boostrap 100 DONE : 3.3 sec
+
 summary(boot, parameter = "theta", ci = .95)
 ## ==================== Parameter = theta ==================== 
 ## # A tibble: 99 x 7
@@ -189,6 +191,7 @@ fit_mlt <- pgIRT(m_data,
 ## Iteration 20 : eval = beta2 0.000277376 elapsed 0 sec
 ## Iteration 40 : eval = beta2 9.464876e-06 elapsed 0 sec
 ## Model converged at iteration 55 : 0 sec
+
 summary(fit_mlt, parameter = c("alpha", "beta"))
 ## =============== Parameter = alpha =============== 
 ## # A tibble: 30 x 3
@@ -225,13 +228,13 @@ summary(fit_mlt, parameter = c("alpha", "beta"))
 ### Dynamic multinomial IRT
 
 Using a simulated voting data (long-format dataframe) `m_data_dyn` and a
-simulated matching bill data for dynamic estimation (See more detail of
-across time estimation in Bailey (2007)).
+simulated matching bill data `sim_match` for dynamic estimation (See
+more detail of across time estimation in Bailey (2007)).
 
 ``` r
 # multinomial dynamic
-load("data/m_data_dyn.RData")
-load("data/sim_match.RData")
+data("m_data_dyn")
+data("sim_match")
 
 m_mlt_d <- make_rollcall(m_data_dyn,
                          unit_id = "unit",
@@ -283,7 +286,8 @@ boot_mlt_d <- pgIRT_boot(fit_mlt_d, boot = 100, verbose = 20)
 ## Boostrap 40 DONE : 7.5 sec
 ## Boostrap 60 DONE : 11.1 sec
 ## Boostrap 80 DONE : 14.8 sec
-## Boostrap 100 DONE : 18.4 sec
+## Boostrap 100 DONE : 18.5 sec
+
 summary(boot_mlt_d, parameter = "theta", ci = .99)
 ## ==================== Parameter = theta ==================== 
 ## # A tibble: 1,000 x 7

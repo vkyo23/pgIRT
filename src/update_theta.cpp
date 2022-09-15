@@ -5,8 +5,12 @@ using namespace arma;
 
 // update theta (binary)
 //[[Rcpp::export]]
-NumericVector update_theta_bin(NumericMatrix Y, NumericMatrix omega, NumericVector alpha, 
-                               NumericVector beta, int constraint, bool is_const) {
+NumericVector update_theta_bin(const NumericMatrix& Y, 
+                               const NumericMatrix& omega, 
+                               const NumericVector& alpha, 
+                               const NumericVector& beta, 
+                               const int& constraint, 
+                               const bool& is_const) {
   int I = Y.nrow();
   int J = Y.ncol();
   
@@ -35,15 +39,22 @@ NumericVector update_theta_bin(NumericMatrix Y, NumericMatrix omega, NumericVect
     }
   }
   
-  return(theta);
+  return theta;
 }
 
 // update theta (binary, dynamic)
 //[[Rcpp::export]]
-NumericMatrix update_theta_bin_dyn(arma::mat Y, arma::mat omega, arma::vec alpha, arma::vec beta,
-                                   NumericVector theta0, NumericVector Delta0, double Delta, 
-                                   IntegerVector constraint, bool is_const, 
-                                   arma::mat session_individual, arma::vec bill_session) {
+NumericMatrix update_theta_bin_dyn(const arma::mat& Y, 
+                                   const arma::mat& omega, 
+                                   const arma::vec& alpha, 
+                                   const arma::vec& beta,
+                                   const NumericVector& theta0, 
+                                   const NumericVector& Delta0, 
+                                   const NumericMatrix& Delta, 
+                                   const IntegerVector& constraint, 
+                                   const bool& is_const, 
+                                   const arma::mat& session_individual, 
+                                   const arma::vec& bill_session) {
   
   
   // Rows
@@ -94,24 +105,24 @@ NumericMatrix update_theta_bin_dyn(arma::mat Y, arma::mat omega, arma::vec alpha
       
       if (t == 0) {
         // first attending
-        double a = a_part + 1 / Delta0[i] + 1 / Delta;
+        double a = a_part + 1 / Delta0[i] + 1 / Delta(i, time);
         double b = b_part + theta0[i] / Delta0[i];
         
         A(t, t) = a;
-        A(t, t+1) = -1/Delta;
-        A(t+1, t) = -1/Delta;
+        A(t, t+1) = -1/Delta(i, time);
+        A(t+1, t) = -1/Delta(i, time);
         B(t) = b;
       } else if (t != (T - 1)) {
-        double a = a_part + 2 / Delta + 1;
+        double a = a_part + 2 / Delta(i, time) + 1;
         double b = b_part;
         
         A(t, t) = a;
-        A(t, t+1) = -1/Delta;
-        A(t+1, t) = -1/Delta;
+        A(t, t+1) = -1/Delta(i, time);
+        A(t+1, t) = -1/Delta(i, time);
         B(t) = b;
         
       } else if (t == (T - 1)) {
-        double a = a_part + 1 / Delta + 1;
+        double a = a_part + 1 / Delta(i, time) + 1;
         double b = b_part;
         
         A(t, t) = a;
@@ -142,24 +153,29 @@ NumericMatrix update_theta_bin_dyn(arma::mat Y, arma::mat omega, arma::vec alpha
     draw_2(_, t) = ifelse(draw_2(_, t) == 0, NA_REAL, draw_2(_, t));
   }
   
-  return(draw_2);
+  return draw_2;
 }
 
 //update theta (multinomial)
 //[[Rcpp::export]]
-NumericVector update_theta_mlt(NumericMatrix Y1, NumericMatrix Y2, List Omega, 
-                               NumericMatrix alpha, NumericMatrix beta, int constraint,
-                               bool is_const,
-                               NumericVector max_cat, NumericVector num_cat) {
-  int I = Y1.nrow();
-  int J = Y1.ncol();
+NumericVector update_theta_mlt(const NumericMatrix& Y1, 
+                               const NumericMatrix& Y2, 
+                               const List& Omega, 
+                               const NumericMatrix& alpha, 
+                               const NumericMatrix& beta, 
+                               const int& constraint,
+                               const bool& is_const,
+                               const NumericVector& max_cat, 
+                               const NumericVector& num_cat) {
+   int I = Y1.nrow();
+   int J = Y1.ncol();
   
-  NumericVector alpha1 = alpha(_, 0);
-  NumericVector alpha2 = alpha(_, 1);
-  NumericVector beta1 = beta(_, 0);
-  NumericVector beta2 = beta(_, 1);
-  NumericMatrix omega1 = Omega[0];
-  NumericMatrix omega2 = Omega[1];
+   NumericVector alpha1 = alpha(_, 0);
+   NumericVector alpha2 = alpha(_, 1);
+   NumericVector beta1 = beta(_, 0);
+   NumericVector beta2 = beta(_, 1);
+   NumericMatrix omega1 = Omega[0];
+   NumericMatrix omega2 = Omega[1];
   
   NumericVector theta(I);
   for (int i = 0; i < I; i++) {
@@ -222,11 +238,20 @@ NumericVector update_theta_mlt(NumericMatrix Y1, NumericMatrix Y2, List Omega,
 
 // update theta (multinomial, dynamic)
 //[[Rcpp::export]]
-NumericMatrix update_theta_mlt_dyn(arma::mat Y1, arma::mat Y2, List Omega, NumericMatrix alpha, NumericMatrix beta,
-                                   NumericVector theta0, NumericVector Delta0, double Delta, 
-                                   IntegerVector constraint, bool is_const,
-                                   arma::mat session_individual, arma::vec bill_session, 
-                                   arma::vec max_cat, arma::vec num_cat) {
+NumericMatrix update_theta_mlt_dyn(const arma::mat& Y1, 
+                                   const arma::mat& Y2, 
+                                   const List& Omega, 
+                                   const NumericMatrix& alpha, 
+                                   const NumericMatrix& beta,
+                                   const NumericVector& theta0, 
+                                   const NumericVector& Delta0, 
+                                   const NumericMatrix& Delta, 
+                                   const IntegerVector& constraint, 
+                                   const bool& is_const,
+                                   const arma::mat& session_individual, 
+                                   const arma::vec& bill_session, 
+                                   const arma::vec& max_cat, 
+                                   const arma::vec& num_cat) {
   
   
   // Rows
@@ -320,24 +345,24 @@ NumericMatrix update_theta_mlt_dyn(arma::mat Y1, arma::mat Y2, List Omega, Numer
       
       if (t == 0) {
         // first attending
-        double a = a_part + 1 / Delta0[i] + 1 / Delta;
+        double a = a_part + 1 / Delta0[i] + 1 / Delta(i, time);
         double b = b_part + theta0[i] / Delta0[i];
         
         A(t, t) = a;
-        A(t, t+1) = -1/Delta;
-        A(t+1, t) = -1/Delta;
+        A(t, t+1) = -1/Delta(i, time);
+        A(t+1, t) = -1/Delta(i, time);
         B(t) = b;
       } else if (t != (T - 1)) {
-        double a = a_part + 2 / Delta + 1;
+        double a = a_part + 2 / Delta(i, time) + 1;
         double b = b_part;
         
         A(t, t) = a;
-        A(t, t+1) = -1/Delta;
-        A(t+1, t) = -1/Delta;
+        A(t, t+1) = -1/Delta(i, time);
+        A(t+1, t) = -1/Delta(i, time);
         B(t) = b;
         
       } else if (t == (T - 1)) {
-        double a = a_part + 1 / Delta + 1;
+        double a = a_part + 1 / Delta(i, time) + 1;
         double b = b_part;
         
         A(t, t) = a;

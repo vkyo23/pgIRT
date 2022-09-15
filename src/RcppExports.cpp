@@ -283,81 +283,81 @@ BEGIN_RCPP
 END_RCPP
 }
 // update_theta_bin
-NumericVector update_theta_bin(NumericMatrix Y, NumericMatrix omega, NumericVector alpha, NumericVector beta, int constraint, bool is_const);
+NumericVector update_theta_bin(const NumericMatrix& Y, const NumericMatrix& omega, const NumericVector& alpha, const NumericVector& beta, const int& constraint, const bool& is_const);
 RcppExport SEXP _pgIRT_update_theta_bin(SEXP YSEXP, SEXP omegaSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP constraintSEXP, SEXP is_constSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type omega(omegaSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< int >::type constraint(constraintSEXP);
-    Rcpp::traits::input_parameter< bool >::type is_const(is_constSEXP);
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type omega(omegaSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< const int& >::type constraint(constraintSEXP);
+    Rcpp::traits::input_parameter< const bool& >::type is_const(is_constSEXP);
     rcpp_result_gen = Rcpp::wrap(update_theta_bin(Y, omega, alpha, beta, constraint, is_const));
     return rcpp_result_gen;
 END_RCPP
 }
 // update_theta_bin_dyn
-NumericMatrix update_theta_bin_dyn(arma::mat Y, arma::mat omega, arma::vec alpha, arma::vec beta, NumericVector theta0, NumericVector Delta0, double Delta, IntegerVector constraint, bool is_const, arma::mat session_individual, arma::vec bill_session);
+NumericMatrix update_theta_bin_dyn(const arma::mat& Y, const arma::mat& omega, const arma::vec& alpha, const arma::vec& beta, const NumericVector& theta0, const NumericVector& Delta0, const NumericMatrix& Delta, const IntegerVector& constraint, const bool& is_const, const arma::mat& session_individual, const arma::vec& bill_session);
 RcppExport SEXP _pgIRT_update_theta_bin_dyn(SEXP YSEXP, SEXP omegaSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP theta0SEXP, SEXP Delta0SEXP, SEXP DeltaSEXP, SEXP constraintSEXP, SEXP is_constSEXP, SEXP session_individualSEXP, SEXP bill_sessionSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type omega(omegaSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type theta0(theta0SEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Delta0(Delta0SEXP);
-    Rcpp::traits::input_parameter< double >::type Delta(DeltaSEXP);
-    Rcpp::traits::input_parameter< IntegerVector >::type constraint(constraintSEXP);
-    Rcpp::traits::input_parameter< bool >::type is_const(is_constSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type session_individual(session_individualSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type bill_session(bill_sessionSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type omega(omegaSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type theta0(theta0SEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type Delta0(Delta0SEXP);
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type Delta(DeltaSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type constraint(constraintSEXP);
+    Rcpp::traits::input_parameter< const bool& >::type is_const(is_constSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type session_individual(session_individualSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type bill_session(bill_sessionSEXP);
     rcpp_result_gen = Rcpp::wrap(update_theta_bin_dyn(Y, omega, alpha, beta, theta0, Delta0, Delta, constraint, is_const, session_individual, bill_session));
     return rcpp_result_gen;
 END_RCPP
 }
 // update_theta_mlt
-NumericVector update_theta_mlt(NumericMatrix Y1, NumericMatrix Y2, List Omega, NumericMatrix alpha, NumericMatrix beta, int constraint, bool is_const, NumericVector max_cat, NumericVector num_cat);
+NumericVector update_theta_mlt(const NumericMatrix& Y1, const NumericMatrix& Y2, const List& Omega, const NumericMatrix& alpha, const NumericMatrix& beta, const int& constraint, const bool& is_const, const NumericVector& max_cat, const NumericVector& num_cat);
 RcppExport SEXP _pgIRT_update_theta_mlt(SEXP Y1SEXP, SEXP Y2SEXP, SEXP OmegaSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP constraintSEXP, SEXP is_constSEXP, SEXP max_catSEXP, SEXP num_catSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type Y1(Y1SEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type Y2(Y2SEXP);
-    Rcpp::traits::input_parameter< List >::type Omega(OmegaSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< int >::type constraint(constraintSEXP);
-    Rcpp::traits::input_parameter< bool >::type is_const(is_constSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type max_cat(max_catSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type num_cat(num_catSEXP);
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type Y1(Y1SEXP);
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type Y2(Y2SEXP);
+    Rcpp::traits::input_parameter< const List& >::type Omega(OmegaSEXP);
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< const int& >::type constraint(constraintSEXP);
+    Rcpp::traits::input_parameter< const bool& >::type is_const(is_constSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type max_cat(max_catSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type num_cat(num_catSEXP);
     rcpp_result_gen = Rcpp::wrap(update_theta_mlt(Y1, Y2, Omega, alpha, beta, constraint, is_const, max_cat, num_cat));
     return rcpp_result_gen;
 END_RCPP
 }
 // update_theta_mlt_dyn
-NumericMatrix update_theta_mlt_dyn(arma::mat Y1, arma::mat Y2, List Omega, NumericMatrix alpha, NumericMatrix beta, NumericVector theta0, NumericVector Delta0, double Delta, IntegerVector constraint, bool is_const, arma::mat session_individual, arma::vec bill_session, arma::vec max_cat, arma::vec num_cat);
+NumericMatrix update_theta_mlt_dyn(const arma::mat& Y1, const arma::mat& Y2, const List& Omega, const NumericMatrix& alpha, const NumericMatrix& beta, const NumericVector& theta0, const NumericVector& Delta0, const NumericMatrix& Delta, const IntegerVector& constraint, const bool& is_const, const arma::mat& session_individual, const arma::vec& bill_session, const arma::vec& max_cat, const arma::vec& num_cat);
 RcppExport SEXP _pgIRT_update_theta_mlt_dyn(SEXP Y1SEXP, SEXP Y2SEXP, SEXP OmegaSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP theta0SEXP, SEXP Delta0SEXP, SEXP DeltaSEXP, SEXP constraintSEXP, SEXP is_constSEXP, SEXP session_individualSEXP, SEXP bill_sessionSEXP, SEXP max_catSEXP, SEXP num_catSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type Y1(Y1SEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type Y2(Y2SEXP);
-    Rcpp::traits::input_parameter< List >::type Omega(OmegaSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type theta0(theta0SEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Delta0(Delta0SEXP);
-    Rcpp::traits::input_parameter< double >::type Delta(DeltaSEXP);
-    Rcpp::traits::input_parameter< IntegerVector >::type constraint(constraintSEXP);
-    Rcpp::traits::input_parameter< bool >::type is_const(is_constSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type session_individual(session_individualSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type bill_session(bill_sessionSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type max_cat(max_catSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type num_cat(num_catSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Y1(Y1SEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Y2(Y2SEXP);
+    Rcpp::traits::input_parameter< const List& >::type Omega(OmegaSEXP);
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type theta0(theta0SEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type Delta0(Delta0SEXP);
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type Delta(DeltaSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type constraint(constraintSEXP);
+    Rcpp::traits::input_parameter< const bool& >::type is_const(is_constSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type session_individual(session_individualSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type bill_session(bill_sessionSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type max_cat(max_catSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type num_cat(num_catSEXP);
     rcpp_result_gen = Rcpp::wrap(update_theta_mlt_dyn(Y1, Y2, Omega, alpha, beta, theta0, Delta0, Delta, constraint, is_const, session_individual, bill_session, max_cat, num_cat));
     return rcpp_result_gen;
 END_RCPP

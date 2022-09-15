@@ -3,9 +3,12 @@ using namespace Rcpp;
 
 //update alpha (binary)
 //[[Rcpp::export]]
-NumericVector update_alpha_bin(NumericMatrix Y, NumericMatrix omega,
-                               NumericVector beta, NumericVector theta,
-                               double a0, double A0) {
+NumericVector update_alpha_bin(NumericMatrix Y, 
+                               NumericMatrix omega,
+                               NumericVector beta, 
+                               NumericVector theta,
+                               double a0, 
+                               double A0) {
   
   // Rows and Cols
   int I = Y.nrow(); int J = Y.ncol();
@@ -45,9 +48,12 @@ NumericVector update_alpha_bin(NumericMatrix Y, NumericMatrix omega,
 
 //update alpha (binary, dynamic)
 //[[Rcpp::export]]
-NumericVector update_alpha_bin_dyn(NumericMatrix Y, NumericMatrix omega, 
-                                   NumericVector beta, NumericMatrix theta,
-                                   double a0, double A0,
+NumericVector update_alpha_bin_dyn(NumericMatrix Y, 
+                                   NumericMatrix omega, 
+                                   NumericVector beta, 
+                                   NumericMatrix theta,
+                                   double a0, 
+                                   double A0,
                                    NumericVector bill_session,
                                    NumericVector matched_bill) {
   
@@ -94,10 +100,13 @@ NumericVector update_alpha_bin_dyn(NumericMatrix Y, NumericMatrix omega,
 
 //update alpha (multinomial)
 //[[Rcpp::export]]
-NumericMatrix update_alpha_mlt(NumericMatrix Y1, NumericMatrix Y2, 
+NumericMatrix update_alpha_mlt(NumericMatrix Y1, 
+                               NumericMatrix Y2, 
                                List Omega, 
-                               NumericMatrix beta, NumericVector theta,
-                               NumericVector a0, NumericVector A0) {
+                               NumericMatrix beta, 
+                               NumericVector theta,
+                               NumericVector a0, 
+                               NumericVector A0) {
   
   // Rows and Cols
   int I = Y1.nrow(); int J = Y1.ncol();
@@ -162,10 +171,13 @@ NumericMatrix update_alpha_mlt(NumericMatrix Y1, NumericMatrix Y2,
 
 //update alpha (multinomial, dynamic)
 //[[Rcpp::export]]
-NumericMatrix update_alpha_mlt_dyn(NumericMatrix Y1, NumericMatrix Y2, 
+NumericMatrix update_alpha_mlt_dyn(NumericMatrix Y1, 
+                                   NumericMatrix Y2, 
                                    List Omega, 
-                                   NumericMatrix beta, NumericMatrix theta,
-                                   NumericVector a0, NumericVector A0,
+                                   NumericMatrix beta, 
+                                   NumericMatrix theta,
+                                   NumericVector a0, 
+                                   NumericVector A0,
                                    NumericVector bill_session,
                                    NumericVector matched_bill) {
   

@@ -2,7 +2,8 @@
 using namespace Rcpp;
 
 //[[Rcpp::export]]
-NumericMatrix set_constraint(NumericMatrix theta, NumericVector constraint) {
+NumericMatrix set_constraint(NumericMatrix theta, 
+                             NumericVector constraint) {
   int T = theta.ncol();
   int I = theta.nrow();
   NumericMatrix theta_new(I, T);

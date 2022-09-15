@@ -2,7 +2,9 @@
 using namespace Rcpp;
 
 //[[Rcpp::export]]
-NumericMatrix organize_Y(NumericMatrix Y1, NumericMatrix Y2, NumericMatrix Y3) {
+NumericMatrix organize_Y(NumericMatrix Y1, 
+                         NumericMatrix Y2, 
+                         NumericMatrix Y3) {
   int I = Y1.nrow();
   int J = Y1.ncol();
   NumericMatrix Y(I, J);

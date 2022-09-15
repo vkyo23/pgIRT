@@ -3,7 +3,9 @@ using namespace Rcpp;
 
 // Get predicted Y values for bootstrap (binary)
 //[[Rcpp::export]]
-IntegerMatrix Calc_predY_bin(NumericVector theta, NumericVector alpha, NumericVector beta) {
+IntegerMatrix Calc_predY_bin(NumericVector theta, 
+                             NumericVector alpha, 
+                             NumericVector beta) {
   int I = theta.length(); int J = alpha.length();
   
   IntegerMatrix Y(I, J);
@@ -20,7 +22,9 @@ IntegerMatrix Calc_predY_bin(NumericVector theta, NumericVector alpha, NumericVe
 
 // Get predicted Y values for bootstrap (binary, dynamic)
 //[[Rcpp::export]]
-IntegerMatrix Calc_predY_bin_dyn(NumericMatrix theta, NumericVector alpha, NumericVector beta,
+IntegerMatrix Calc_predY_bin_dyn(NumericMatrix theta, 
+                                 NumericVector alpha, 
+                                 NumericVector beta,
                                  NumericVector bill_session) {
   int I = theta.nrow(); int J = alpha.length();
   
@@ -38,7 +42,9 @@ IntegerMatrix Calc_predY_bin_dyn(NumericMatrix theta, NumericVector alpha, Numer
 
 // Get predicted Y values for bootstrap (multinomial)
 //[[Rcpp::export]]
-List Calc_predY_mlt(NumericVector theta, NumericMatrix alpha, NumericMatrix beta) {
+List Calc_predY_mlt(NumericVector theta, 
+                    NumericMatrix alpha, 
+                    NumericMatrix beta) {
   int I = theta.length(); int J = alpha.nrow();
   
   IntegerMatrix Y1(I, J);
@@ -71,7 +77,9 @@ List Calc_predY_mlt(NumericVector theta, NumericMatrix alpha, NumericMatrix beta
 
 // Get predicted Y values for bootstrap (multinomial, dynamic)
 //[[Rcpp::export]]
-List Calc_predY_mlt_dyn(NumericMatrix theta, NumericMatrix alpha, NumericMatrix beta,
+List Calc_predY_mlt_dyn(NumericMatrix theta, 
+                        NumericMatrix alpha, 
+                        NumericMatrix beta,
                         NumericVector bill_session) {
   int I = theta.nrow(); int J = alpha.nrow();
   

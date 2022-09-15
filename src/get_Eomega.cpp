@@ -3,7 +3,9 @@ using namespace Rcpp;
 
 // get I * J matrix of omega (binary)
 //[[Rcpp::export]]
-NumericMatrix get_Eomega_bin(NumericVector theta, NumericVector alpha, NumericVector beta) {
+NumericMatrix get_Eomega_bin(NumericVector theta, 
+                             NumericVector alpha, 
+                             NumericVector beta) {
   int I = theta.length(); int J = alpha.length();
   
   NumericMatrix omega(I, J);
@@ -24,7 +26,9 @@ NumericMatrix get_Eomega_bin(NumericVector theta, NumericVector alpha, NumericVe
 
 // get I * J matrix of omega (binary, dynamic)
 //[[Rcpp::export]]
-NumericMatrix get_Eomega_bin_dyn(NumericMatrix theta, NumericVector alpha, NumericVector beta, 
+NumericMatrix get_Eomega_bin_dyn(NumericMatrix theta, 
+                                 NumericVector alpha, 
+                                 NumericVector beta, 
                                  NumericVector bill_session) {
   int I = theta.nrow(); int J = alpha.length();
   
@@ -46,7 +50,9 @@ NumericMatrix get_Eomega_bin_dyn(NumericMatrix theta, NumericVector alpha, Numer
 
 // get I * J matrix of omega (multinomial)
 //[[Rcpp::export]]
-List get_Eomega_mlt(NumericVector theta, NumericMatrix alpha, NumericMatrix beta) {
+List get_Eomega_mlt(NumericVector theta, 
+                    NumericMatrix alpha, 
+                    NumericMatrix beta) {
   int I = theta.length(); int J = alpha.nrow();
   
   NumericVector alpha1 = alpha(_, 0);
@@ -78,7 +84,9 @@ List get_Eomega_mlt(NumericVector theta, NumericMatrix alpha, NumericMatrix beta
 
 // get I * J matrix of omega (multinomial, dynamic)
 //[[Rcpp::export]]
-List get_Eomega_mlt_dyn(NumericMatrix theta, NumericMatrix alpha, NumericMatrix beta, 
+List get_Eomega_mlt_dyn(NumericMatrix theta, 
+                        NumericMatrix alpha, 
+                        NumericMatrix beta, 
                         NumericVector bill_session) {
   int I = theta.nrow(); int J = alpha.nrow();
   

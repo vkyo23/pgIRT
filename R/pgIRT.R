@@ -11,7 +11,7 @@
 #'   \item \code{B0} a double (\code{bin}, \code{bin_dyn}) or 2-length vector (\code{multi}, \code{multi_dyn}), prior variance of beta. Default is 25 (\code{bin}, \code{bin_dyn}), c(25, 25) (\code{multi}, \code{multi_dyn}).
 #'   \item \code{theta0} a numeric vector (I length), prior mean of theta_i0 for dynamic model (\code{bin_dyn}, \code{multi_dyn}). Default is \code{rep(0, I)}. 
 #'   \item \code{Delta0} a numeric vector (I length), prior variance of theta_i0 for dynamic model (\code{bin_dyn}, \code{multi_dyn}). Default is \code{rep(1, I)}.
-#'   \item \code{Delta} a double, prior evolution variance of theta_it for dynamic model (\code{bin_dyn}, \code{multi_dyn}). Default is 0.01.
+#'   \item \code{Delta} a double or matrix, prior evolution variance of theta_it for dynamic model (\code{bin_dyn}, \code{multi_dyn}). Default is matrix(0.01, I, T).
 #' }
 #' @param init a list, containing initial values (strongly recommended to use \link{make_init}):
 #' \itemize{
@@ -112,6 +112,11 @@ pgIRT <- function(data,
       bill_match <- dyn_options$bill_match
     } else {
       bill_match <- rep(NA, J)
+    }
+    if (length(prior$Delta) == 1) {
+      prior$Delta <- matrix(prior$Delta, I, length(unique(bill_session)))
+    } else if (ncol(prior$Delta) != length(unique(bill_session))) {
+      stop("Please supply `prior$Delta` properly. This argument only allows a 'double' or I x T 'matrix'.")
     }
     if (!is.null(constraint)) {
       if (length(constraint) == 1) {

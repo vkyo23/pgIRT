@@ -1,17 +1,15 @@
 Package: pgIRT
 Type: Package
 Title: Fast IRT estimation with Polya-Gamma data augmentation and EM Algorithm
-Version: 0.0.1
+Version: 0.0.2
 Date: 2022-09-01
 Author: Ukyo Kanetaka
 Maintainer: Ukyo Kanetaka <u.kanetaka@gmail.com>
-Description: This package implements fast IRT model with Polya-Gamma data augmentation and EM Algorithm.
+Description: This package implements fast IRT model with Polya-Gamma data augmentation and EM Algorithm. The function is available for the data containing K >= 2 response category (binary ~ K-multinomial) and having different categories across items.
 License: MIT + file LICENSE
-Depends:
-    Rcpp
 Imports: 
-    crayon,
     dplyr,
+    Rcpp,
     rlang,
     stats,
     tidyr

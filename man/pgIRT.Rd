@@ -6,59 +6,105 @@
 \usage{
 pgIRT(
   data,
-  model = c("bin", "bin_dyn", "multi", "multi_dyn"),
-  prior = NULL,
+  model = c("default", "dynamic"),
   init = NULL,
+  prior = NULL,
   constraint = NULL,
+  std = FALSE,
   dyn_options = NULL,
-  tol = 1e-06,
   maxit = 500,
-  verbose = NULL,
-  std = FALSE
+  tol = 1e-06,
+  verbose = NULL
 )
 }
 \arguments{
-\item{data}{a matrix, roll-call matrix (I x J). For binary model, the matrix is allowed to contain only 1, 0 and NA. For multinomial, 1, 2, 3 and NA is allowed.}
+\item{data}{a matrix, data.frame or tbl_df of roll-call (i.e. individual-item) matrix (I x J). The elements should start from 1 and missing values should be NA.}
 
-\item{model}{a string, one of "bin" (binary), "bin_dyn" (dynamic binary), "multi" (multinomial) or "multi_dyn" (dynamic multinomial)}
+\item{model}{a string, one of "default" or "dynamic".}
+
+\item{init}{a list, containing initial values. If not supplied, the function automatically set them from the data.
+\itemize{
+\item \code{alpha} J x K-1 matrix of alpha.
+\item \code{beta} J x K-1 matrix of beta.
+\item \code{theta} I x T (sessions) matrix of theta. For default model, T = 1.
+}}
 
 \item{prior}{a list, containing prior distribution:
 \itemize{
-\item \code{a0} a double (\code{bin}, \code{bin_dyn})  or 2-length vector (\code{multi}, \code{multi_dyn}), prior mean of alpha. Default is 0 (\code{bin}, \code{bin_dyn}), c(0, 0) (\code{multi}, \code{multi_dyn}).
-\item \code{A0} a double (\code{bin}, \code{bin_dyn}) or 2-length vector (\code{multi}, \code{multi_dyn}), prior variance of alpha. Default is 25 (\code{bin}, \code{bin_dyn}), c(25, 25) (\code{multi}, \code{multi_dyn}).
-\item \code{b0} a double (\code{bin}, \code{bin_dyn}) or 2-length vector (\code{multi}, \code{multi_dyn}), prior mean of beta Default is 0 (\code{bin}, \code{bin_dyn}), c(0, 0) (\code{multi}, \code{multi_dyn}).
-\item \code{B0} a double (\code{bin}, \code{bin_dyn}) or 2-length vector (\code{multi}, \code{multi_dyn}), prior variance of beta. Default is 25 (\code{bin}, \code{bin_dyn}), c(25, 25) (\code{multi}, \code{multi_dyn}).
-\item \code{theta0} a numeric vector (I length), prior mean of theta_i0 for dynamic model (\code{bin_dyn}, \code{multi_dyn}). Default is \code{rep(0, I)}.
-\item \code{Delta0} a numeric vector (I length), prior variance of theta_i0 for dynamic model (\code{bin_dyn}, \code{multi_dyn}). Default is \code{rep(1, I)}.
-\item \code{Delta} a double or matrix, prior evolution variance of theta_it for dynamic model (\code{bin_dyn}, \code{multi_dyn}). Default is matrix(0.01, I, T).
+\item \code{a0} a double or J x K matrix, prior mean of alpha. Default is 0.
+\item \code{A0} a double or J x K matrix, prior variance of alpha. Default is 25.
+\item \code{b0} a double or J x K matrix, prior mean of beta Default is 0.
+\item \code{B0} a double or J x K matrix, prior variance of beta. Default is 25.
+\item \code{theta0} a double or I length vector, prior mean of theta_i0 for dynamic model. Default is 0.
+\item \code{Delta0} a double or I length vector, prior variance of theta_i0 for dynamic model. Default is 1.
+\item \code{Delta} a double, prior evolution variance of theta_it for dynamic model. Default is 0.01.
 }}
 
-\item{init}{a list, containing initial values (strongly recommended to use \link{make_init}):
-\itemize{
-\item \code{alpha} J length vector of alpha for \code{bin} and \code{bin_dyn} model. J x 2 matrix for \code{multi} and \code{multi_dyn}.
-\item \code{beta} J length vector of beta for \code{bin} and \code{bin_dyn} model. J x 2 matrix for \code{multi} and \code{multi_dyn}.
-\item \code{theta} I length vector of theta for \code{bin} and \code{multi} model. I x T (sessions) matrix for \code{bin_dyn} and \code{multi_dyn}.
-}}
+\item{constraint}{an integer scalar or vector (for dynamic model, the same length as the number of sessions),
+index of the voter i (the location of i) whose ideal point is always set positive.}
 
-\item{constraint}{an integer or integer vector (for dynamic model, the same length as the number of sessions), indicating the voter whose ideal point is always set positive.}
+\item{std}{a bool, whether ideal points are standardized or not. Default is FALSE.}
 
-\item{dyn_options}{a list, containing the options for dynamic model. If you choose \code{bin_dyn} or \code{multi_dyn} for \code{model}, you must supply this argument. Using \link{make_dyn_options}() is strongly recommended:
+\item{dyn_options}{a list, containing the options for dynamic model. If you choose "dynamic" for \code{model}, you must supply this argument. Using \link{make_dyn_options}() is strongly recommended:
 \itemize{
-\item \code{session_individual} a matrix, the first column contains attending sessions (starts from 0) of individuals and
+\item \code{session_individual} an integer matrix, the first column contains attending sessions (starts from 1) of individuals and
 the second column contains the identifiers of individuals.
-\item \code{bill_session} an integer vector, indicating the sessions each bill belongs to (starts from 0).
-\item \code{bill_match} (Optional). An integer vector which indicates matched bills (the location of matched bills, starts from 0)
+\item \code{bill_session} an integer vector, indicating the sessions each bill belongs to (starts from 1).
+\item \code{matched_bill} (Optional). An integer vector which indicates matched bills (the location of matched bills, starts from 1)
 and is the same length as the number of bills. If a bill does not have matches, please fill NA. Using \link{make_bill_match} is strongly recommended.
 }}
 
-\item{tol}{a double (< 1), convergence threshold. Default is 1e-6.}
-
 \item{maxit}{am integer, maximum number of iterations for EM. Default is 500.}
 
-\item{verbose}{a integer, the function prints the status every \code{verbose}. Default is NULL.}
+\item{tol}{a double (< 1), convergence threshold. Default is 1e-6.}
 
-\item{std}{a bool, whether ideal points are standardized or not. Default is FALSE.}
+\item{verbose}{a integer, the function prints the status every \code{verbose}. Default is NULL.}
 }
 \description{
-\link{pgIRT} Estimates IRT model (binary, multinomial and dynamic) by Polya-Gamma data augmentation and EM algorithm.
+\link{pgIRT} estimates IRT model with Polya-Gamma data augmentation and EM algorithm. The function is available for
+the data containing K >= 2 response category (binary ~ K-multinomial) and having different categories across items j.
+}
+\examples{
+\dontrun{
+# Binary model (K = 2)
+I <- 100
+J <- 1000
+theta_true <- seq(-2, 2, length = I)
+alpha_true <- rnorm(J)
+beta_true <- rnorm(J)
+Y_star <- cbind(1, theta_true) \%*\% rbind(alpha_true, beta_true)
+Y <- matrix(rbinom(I * J, 1, plogis(Y_star)), I, J)
+Y[Y == 0] <- 2 # Elements should start from 1 for `pgIRT`
+pgfit <- pgIRT(Y,
+               model = "default",
+               constraint = which.max(theta_true))
+cor(pgfit$parameter$theta, theta_true)
+
+
+# Multinomial model (K >= 2)
+data(m_data_dyn)
+mat <- make_rollcall(m_data_dyn,
+                     unit_id = "unit",
+                     bill_id = "bill",
+                     vote_col = "vote")
+mat <- clean_rollcall(mat)
+pgfit_mlt <- pgIRT(mat,
+                   model = "default",
+                   constraint = 1)
+summary(pgfit_mlt, parameter = "theta")
+
+
+# Dynamic multinomial model 
+ops <- make_dyn_ops(m_data_dyn,
+                    unit_id = "unit",
+                    bill_id = "bill",
+                    time_id = "time",
+                    vote_col = "vote",
+                    clean = TRUE)
+pgfit_mlt_dyn <- pgIRT(mat,
+                       model = "dynamic",
+                       dyn_options = ops,
+                       constraint = 1)
+summary(pgfit_mlt_dyn, parameter = "theta")
+}
 }

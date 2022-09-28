@@ -1,9 +1,3 @@
-#' @title Simulated voting data (multinomial)
-#' @description \code{m_data} is simulated voting dataset
-#'
-#' @format a matrix, rows are voters (I = 100) and cols are bills (J = 15). 
-"m_data"
-
 #' @title Simulated voting long-format data (dynamic multinomial)
 #' @description \code{m_data_dyn} is simulated voting long-format dataset
 #'

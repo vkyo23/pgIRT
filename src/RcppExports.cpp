@@ -11,381 +11,82 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// Calc_predY_bin
-IntegerMatrix Calc_predY_bin(NumericVector theta, NumericVector alpha, NumericVector beta);
-RcppExport SEXP _pgIRT_Calc_predY_bin(SEXP thetaSEXP, SEXP alphaSEXP, SEXP betaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type beta(betaSEXP);
-    rcpp_result_gen = Rcpp::wrap(Calc_predY_bin(theta, alpha, beta));
-    return rcpp_result_gen;
-END_RCPP
-}
-// Calc_predY_bin_dyn
-IntegerMatrix Calc_predY_bin_dyn(NumericMatrix theta, NumericVector alpha, NumericVector beta, NumericVector bill_session);
-RcppExport SEXP _pgIRT_Calc_predY_bin_dyn(SEXP thetaSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP bill_sessionSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type bill_session(bill_sessionSEXP);
-    rcpp_result_gen = Rcpp::wrap(Calc_predY_bin_dyn(theta, alpha, beta, bill_session));
-    return rcpp_result_gen;
-END_RCPP
-}
-// Calc_predY_mlt
-List Calc_predY_mlt(NumericVector theta, NumericMatrix alpha, NumericMatrix beta);
-RcppExport SEXP _pgIRT_Calc_predY_mlt(SEXP thetaSEXP, SEXP alphaSEXP, SEXP betaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type beta(betaSEXP);
-    rcpp_result_gen = Rcpp::wrap(Calc_predY_mlt(theta, alpha, beta));
-    return rcpp_result_gen;
-END_RCPP
-}
-// Calc_predY_mlt_dyn
-List Calc_predY_mlt_dyn(NumericMatrix theta, NumericMatrix alpha, NumericMatrix beta, NumericVector bill_session);
-RcppExport SEXP _pgIRT_Calc_predY_mlt_dyn(SEXP thetaSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP bill_sessionSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type bill_session(bill_sessionSEXP);
-    rcpp_result_gen = Rcpp::wrap(Calc_predY_mlt_dyn(theta, alpha, beta, bill_session));
-    return rcpp_result_gen;
-END_RCPP
-}
-// get_Eomega_bin
-NumericMatrix get_Eomega_bin(NumericVector theta, NumericVector alpha, NumericVector beta);
-RcppExport SEXP _pgIRT_get_Eomega_bin(SEXP thetaSEXP, SEXP alphaSEXP, SEXP betaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type beta(betaSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_Eomega_bin(theta, alpha, beta));
-    return rcpp_result_gen;
-END_RCPP
-}
-// get_Eomega_bin_dyn
-NumericMatrix get_Eomega_bin_dyn(NumericMatrix theta, NumericVector alpha, NumericVector beta, NumericVector bill_session);
-RcppExport SEXP _pgIRT_get_Eomega_bin_dyn(SEXP thetaSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP bill_sessionSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type bill_session(bill_sessionSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_Eomega_bin_dyn(theta, alpha, beta, bill_session));
-    return rcpp_result_gen;
-END_RCPP
-}
-// get_Eomega_mlt
-List get_Eomega_mlt(NumericVector theta, NumericMatrix alpha, NumericMatrix beta);
-RcppExport SEXP _pgIRT_get_Eomega_mlt(SEXP thetaSEXP, SEXP alphaSEXP, SEXP betaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type beta(betaSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_Eomega_mlt(theta, alpha, beta));
-    return rcpp_result_gen;
-END_RCPP
-}
-// get_Eomega_mlt_dyn
-List get_Eomega_mlt_dyn(NumericMatrix theta, NumericMatrix alpha, NumericMatrix beta, NumericVector bill_session);
-RcppExport SEXP _pgIRT_get_Eomega_mlt_dyn(SEXP thetaSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP bill_sessionSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type bill_session(bill_sessionSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_Eomega_mlt_dyn(theta, alpha, beta, bill_session));
-    return rcpp_result_gen;
-END_RCPP
-}
-// organize_Y
-NumericMatrix organize_Y(NumericMatrix Y1, NumericMatrix Y2, NumericMatrix Y3);
-RcppExport SEXP _pgIRT_organize_Y(SEXP Y1SEXP, SEXP Y2SEXP, SEXP Y3SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type Y1(Y1SEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type Y2(Y2SEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type Y3(Y3SEXP);
-    rcpp_result_gen = Rcpp::wrap(organize_Y(Y1, Y2, Y3));
-    return rcpp_result_gen;
-END_RCPP
-}
-// set_constraint
-NumericMatrix set_constraint(NumericMatrix theta, NumericVector constraint);
-RcppExport SEXP _pgIRT_set_constraint(SEXP thetaSEXP, SEXP constraintSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type constraint(constraintSEXP);
-    rcpp_result_gen = Rcpp::wrap(set_constraint(theta, constraint));
-    return rcpp_result_gen;
-END_RCPP
-}
-// update_alpha_bin
-NumericVector update_alpha_bin(NumericMatrix Y, NumericMatrix omega, NumericVector beta, NumericVector theta, double a0, double A0);
-RcppExport SEXP _pgIRT_update_alpha_bin(SEXP YSEXP, SEXP omegaSEXP, SEXP betaSEXP, SEXP thetaSEXP, SEXP a0SEXP, SEXP A0SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type omega(omegaSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< double >::type a0(a0SEXP);
-    Rcpp::traits::input_parameter< double >::type A0(A0SEXP);
-    rcpp_result_gen = Rcpp::wrap(update_alpha_bin(Y, omega, beta, theta, a0, A0));
-    return rcpp_result_gen;
-END_RCPP
-}
-// update_alpha_bin_dyn
-NumericVector update_alpha_bin_dyn(NumericMatrix Y, NumericMatrix omega, NumericVector beta, NumericMatrix theta, double a0, double A0, NumericVector bill_session, NumericVector matched_bill);
-RcppExport SEXP _pgIRT_update_alpha_bin_dyn(SEXP YSEXP, SEXP omegaSEXP, SEXP betaSEXP, SEXP thetaSEXP, SEXP a0SEXP, SEXP A0SEXP, SEXP bill_sessionSEXP, SEXP matched_billSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type omega(omegaSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< double >::type a0(a0SEXP);
-    Rcpp::traits::input_parameter< double >::type A0(A0SEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type bill_session(bill_sessionSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type matched_bill(matched_billSEXP);
-    rcpp_result_gen = Rcpp::wrap(update_alpha_bin_dyn(Y, omega, beta, theta, a0, A0, bill_session, matched_bill));
-    return rcpp_result_gen;
-END_RCPP
-}
-// update_alpha_mlt
-NumericMatrix update_alpha_mlt(NumericMatrix Y1, NumericMatrix Y2, List Omega, NumericMatrix beta, NumericVector theta, NumericVector a0, NumericVector A0);
-RcppExport SEXP _pgIRT_update_alpha_mlt(SEXP Y1SEXP, SEXP Y2SEXP, SEXP OmegaSEXP, SEXP betaSEXP, SEXP thetaSEXP, SEXP a0SEXP, SEXP A0SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type Y1(Y1SEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type Y2(Y2SEXP);
-    Rcpp::traits::input_parameter< List >::type Omega(OmegaSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type a0(a0SEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type A0(A0SEXP);
-    rcpp_result_gen = Rcpp::wrap(update_alpha_mlt(Y1, Y2, Omega, beta, theta, a0, A0));
-    return rcpp_result_gen;
-END_RCPP
-}
-// update_alpha_mlt_dyn
-NumericMatrix update_alpha_mlt_dyn(NumericMatrix Y1, NumericMatrix Y2, List Omega, NumericMatrix beta, NumericMatrix theta, NumericVector a0, NumericVector A0, NumericVector bill_session, NumericVector matched_bill);
-RcppExport SEXP _pgIRT_update_alpha_mlt_dyn(SEXP Y1SEXP, SEXP Y2SEXP, SEXP OmegaSEXP, SEXP betaSEXP, SEXP thetaSEXP, SEXP a0SEXP, SEXP A0SEXP, SEXP bill_sessionSEXP, SEXP matched_billSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type Y1(Y1SEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type Y2(Y2SEXP);
-    Rcpp::traits::input_parameter< List >::type Omega(OmegaSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type a0(a0SEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type A0(A0SEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type bill_session(bill_sessionSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type matched_bill(matched_billSEXP);
-    rcpp_result_gen = Rcpp::wrap(update_alpha_mlt_dyn(Y1, Y2, Omega, beta, theta, a0, A0, bill_session, matched_bill));
-    return rcpp_result_gen;
-END_RCPP
-}
-// update_beta_bin
-NumericVector update_beta_bin(NumericMatrix Y, NumericMatrix omega, NumericVector alpha, NumericVector theta, double b0, double B0);
-RcppExport SEXP _pgIRT_update_beta_bin(SEXP YSEXP, SEXP omegaSEXP, SEXP alphaSEXP, SEXP thetaSEXP, SEXP b0SEXP, SEXP B0SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type omega(omegaSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< double >::type b0(b0SEXP);
-    Rcpp::traits::input_parameter< double >::type B0(B0SEXP);
-    rcpp_result_gen = Rcpp::wrap(update_beta_bin(Y, omega, alpha, theta, b0, B0));
-    return rcpp_result_gen;
-END_RCPP
-}
-// update_beta_bin_dyn
-NumericVector update_beta_bin_dyn(NumericMatrix Y, NumericMatrix omega, NumericVector alpha, NumericMatrix theta, double b0, double B0, NumericVector bill_session);
-RcppExport SEXP _pgIRT_update_beta_bin_dyn(SEXP YSEXP, SEXP omegaSEXP, SEXP alphaSEXP, SEXP thetaSEXP, SEXP b0SEXP, SEXP B0SEXP, SEXP bill_sessionSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type omega(omegaSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< double >::type b0(b0SEXP);
-    Rcpp::traits::input_parameter< double >::type B0(B0SEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type bill_session(bill_sessionSEXP);
-    rcpp_result_gen = Rcpp::wrap(update_beta_bin_dyn(Y, omega, alpha, theta, b0, B0, bill_session));
-    return rcpp_result_gen;
-END_RCPP
-}
-// update_beta_mlt
-NumericMatrix update_beta_mlt(NumericMatrix Y1, NumericMatrix Y2, List Omega, NumericMatrix alpha, NumericVector theta, NumericVector b0, NumericVector B0);
-RcppExport SEXP _pgIRT_update_beta_mlt(SEXP Y1SEXP, SEXP Y2SEXP, SEXP OmegaSEXP, SEXP alphaSEXP, SEXP thetaSEXP, SEXP b0SEXP, SEXP B0SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type Y1(Y1SEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type Y2(Y2SEXP);
-    Rcpp::traits::input_parameter< List >::type Omega(OmegaSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type b0(b0SEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type B0(B0SEXP);
-    rcpp_result_gen = Rcpp::wrap(update_beta_mlt(Y1, Y2, Omega, alpha, theta, b0, B0));
-    return rcpp_result_gen;
-END_RCPP
-}
-// update_beta_mlt_dyn
-NumericMatrix update_beta_mlt_dyn(NumericMatrix Y1, NumericMatrix Y2, List Omega, NumericMatrix alpha, NumericMatrix theta, NumericVector b0, NumericVector B0, NumericVector bill_session);
-RcppExport SEXP _pgIRT_update_beta_mlt_dyn(SEXP Y1SEXP, SEXP Y2SEXP, SEXP OmegaSEXP, SEXP alphaSEXP, SEXP thetaSEXP, SEXP b0SEXP, SEXP B0SEXP, SEXP bill_sessionSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type Y1(Y1SEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type Y2(Y2SEXP);
-    Rcpp::traits::input_parameter< List >::type Omega(OmegaSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type theta(thetaSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type b0(b0SEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type B0(B0SEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type bill_session(bill_sessionSEXP);
-    rcpp_result_gen = Rcpp::wrap(update_beta_mlt_dyn(Y1, Y2, Omega, alpha, theta, b0, B0, bill_session));
-    return rcpp_result_gen;
-END_RCPP
-}
-// update_theta_bin
-NumericVector update_theta_bin(const NumericMatrix& Y, const NumericMatrix& omega, const NumericVector& alpha, const NumericVector& beta, const int& constraint, const bool& is_const);
-RcppExport SEXP _pgIRT_update_theta_bin(SEXP YSEXP, SEXP omegaSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP constraintSEXP, SEXP is_constSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const NumericMatrix& >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< const NumericMatrix& >::type omega(omegaSEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< const int& >::type constraint(constraintSEXP);
-    Rcpp::traits::input_parameter< const bool& >::type is_const(is_constSEXP);
-    rcpp_result_gen = Rcpp::wrap(update_theta_bin(Y, omega, alpha, beta, constraint, is_const));
-    return rcpp_result_gen;
-END_RCPP
-}
-// update_theta_bin_dyn
-NumericMatrix update_theta_bin_dyn(const arma::mat& Y, const arma::mat& omega, const arma::vec& alpha, const arma::vec& beta, const NumericVector& theta0, const NumericVector& Delta0, const NumericMatrix& Delta, const IntegerVector& constraint, const bool& is_const, const arma::mat& session_individual, const arma::vec& bill_session);
-RcppExport SEXP _pgIRT_update_theta_bin_dyn(SEXP YSEXP, SEXP omegaSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP theta0SEXP, SEXP Delta0SEXP, SEXP DeltaSEXP, SEXP constraintSEXP, SEXP is_constSEXP, SEXP session_individualSEXP, SEXP bill_sessionSEXP) {
+// EMstep
+List EMstep(const arma::mat& Y, const arma::mat& alpha, const arma::mat& beta, const arma::vec& theta, const arma::vec& max_cat, const int& constraint, const arma::mat& a0, const arma::mat& A0, const arma::mat& b0, const arma::mat& B0, const int& maxit, const double& tol, const int& verbose, const bool& std);
+RcppExport SEXP _pgIRT_EMstep(SEXP YSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP thetaSEXP, SEXP max_catSEXP, SEXP constraintSEXP, SEXP a0SEXP, SEXP A0SEXP, SEXP b0SEXP, SEXP B0SEXP, SEXP maxitSEXP, SEXP tolSEXP, SEXP verboseSEXP, SEXP stdSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::mat& >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< const arma::mat& >::type omega(omegaSEXP);
-    Rcpp::traits::input_parameter< const arma::vec& >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< const arma::vec& >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type theta0(theta0SEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type Delta0(Delta0SEXP);
-    Rcpp::traits::input_parameter< const NumericMatrix& >::type Delta(DeltaSEXP);
-    Rcpp::traits::input_parameter< const IntegerVector& >::type constraint(constraintSEXP);
-    Rcpp::traits::input_parameter< const bool& >::type is_const(is_constSEXP);
-    Rcpp::traits::input_parameter< const arma::mat& >::type session_individual(session_individualSEXP);
-    Rcpp::traits::input_parameter< const arma::vec& >::type bill_session(bill_sessionSEXP);
-    rcpp_result_gen = Rcpp::wrap(update_theta_bin_dyn(Y, omega, alpha, beta, theta0, Delta0, Delta, constraint, is_const, session_individual, bill_session));
-    return rcpp_result_gen;
-END_RCPP
-}
-// update_theta_mlt
-NumericVector update_theta_mlt(const NumericMatrix& Y1, const NumericMatrix& Y2, const List& Omega, const NumericMatrix& alpha, const NumericMatrix& beta, const int& constraint, const bool& is_const, const NumericVector& max_cat, const NumericVector& num_cat);
-RcppExport SEXP _pgIRT_update_theta_mlt(SEXP Y1SEXP, SEXP Y2SEXP, SEXP OmegaSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP constraintSEXP, SEXP is_constSEXP, SEXP max_catSEXP, SEXP num_catSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const NumericMatrix& >::type Y1(Y1SEXP);
-    Rcpp::traits::input_parameter< const NumericMatrix& >::type Y2(Y2SEXP);
-    Rcpp::traits::input_parameter< const List& >::type Omega(OmegaSEXP);
-    Rcpp::traits::input_parameter< const NumericMatrix& >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< const NumericMatrix& >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< const int& >::type constraint(constraintSEXP);
-    Rcpp::traits::input_parameter< const bool& >::type is_const(is_constSEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type max_cat(max_catSEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type num_cat(num_catSEXP);
-    rcpp_result_gen = Rcpp::wrap(update_theta_mlt(Y1, Y2, Omega, alpha, beta, constraint, is_const, max_cat, num_cat));
-    return rcpp_result_gen;
-END_RCPP
-}
-// update_theta_mlt_dyn
-NumericMatrix update_theta_mlt_dyn(const arma::mat& Y1, const arma::mat& Y2, const List& Omega, const NumericMatrix& alpha, const NumericMatrix& beta, const NumericVector& theta0, const NumericVector& Delta0, const NumericMatrix& Delta, const IntegerVector& constraint, const bool& is_const, const arma::mat& session_individual, const arma::vec& bill_session, const arma::vec& max_cat, const arma::vec& num_cat);
-RcppExport SEXP _pgIRT_update_theta_mlt_dyn(SEXP Y1SEXP, SEXP Y2SEXP, SEXP OmegaSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP theta0SEXP, SEXP Delta0SEXP, SEXP DeltaSEXP, SEXP constraintSEXP, SEXP is_constSEXP, SEXP session_individualSEXP, SEXP bill_sessionSEXP, SEXP max_catSEXP, SEXP num_catSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::mat& >::type Y1(Y1SEXP);
-    Rcpp::traits::input_parameter< const arma::mat& >::type Y2(Y2SEXP);
-    Rcpp::traits::input_parameter< const List& >::type Omega(OmegaSEXP);
-    Rcpp::traits::input_parameter< const NumericMatrix& >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< const NumericMatrix& >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type theta0(theta0SEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type Delta0(Delta0SEXP);
-    Rcpp::traits::input_parameter< const NumericMatrix& >::type Delta(DeltaSEXP);
-    Rcpp::traits::input_parameter< const IntegerVector& >::type constraint(constraintSEXP);
-    Rcpp::traits::input_parameter< const bool& >::type is_const(is_constSEXP);
-    Rcpp::traits::input_parameter< const arma::mat& >::type session_individual(session_individualSEXP);
-    Rcpp::traits::input_parameter< const arma::vec& >::type bill_session(bill_sessionSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type theta(thetaSEXP);
     Rcpp::traits::input_parameter< const arma::vec& >::type max_cat(max_catSEXP);
-    Rcpp::traits::input_parameter< const arma::vec& >::type num_cat(num_catSEXP);
-    rcpp_result_gen = Rcpp::wrap(update_theta_mlt_dyn(Y1, Y2, Omega, alpha, beta, theta0, Delta0, Delta, constraint, is_const, session_individual, bill_session, max_cat, num_cat));
+    Rcpp::traits::input_parameter< const int& >::type constraint(constraintSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type a0(a0SEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type A0(A0SEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type b0(b0SEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type B0(B0SEXP);
+    Rcpp::traits::input_parameter< const int& >::type maxit(maxitSEXP);
+    Rcpp::traits::input_parameter< const double& >::type tol(tolSEXP);
+    Rcpp::traits::input_parameter< const int& >::type verbose(verboseSEXP);
+    Rcpp::traits::input_parameter< const bool& >::type std(stdSEXP);
+    rcpp_result_gen = Rcpp::wrap(EMstep(Y, alpha, beta, theta, max_cat, constraint, a0, A0, b0, B0, maxit, tol, verbose, std));
+    return rcpp_result_gen;
+END_RCPP
+}
+// dyn_EMstep
+List dyn_EMstep(const arma::mat& Y, const arma::mat& alpha, const arma::mat& beta, const arma::mat& theta, const arma::vec& max_cat, const arma::vec& constraint, const arma::mat& a0, const arma::mat& A0, const arma::mat& b0, const arma::mat& B0, const arma::vec& theta0, const arma::vec& Delta0, const arma::mat& Delta, const arma::mat& session_individual, const arma::vec& bill_session, const arma::vec& matched_bill, const int& maxit, const double& tol, const int& verbose, const bool& std);
+RcppExport SEXP _pgIRT_dyn_EMstep(SEXP YSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP thetaSEXP, SEXP max_catSEXP, SEXP constraintSEXP, SEXP a0SEXP, SEXP A0SEXP, SEXP b0SEXP, SEXP B0SEXP, SEXP theta0SEXP, SEXP Delta0SEXP, SEXP DeltaSEXP, SEXP session_individualSEXP, SEXP bill_sessionSEXP, SEXP matched_billSEXP, SEXP maxitSEXP, SEXP tolSEXP, SEXP verboseSEXP, SEXP stdSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type theta(thetaSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type max_cat(max_catSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type constraint(constraintSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type a0(a0SEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type A0(A0SEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type b0(b0SEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type B0(B0SEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type theta0(theta0SEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type Delta0(Delta0SEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Delta(DeltaSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type session_individual(session_individualSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type bill_session(bill_sessionSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type matched_bill(matched_billSEXP);
+    Rcpp::traits::input_parameter< const int& >::type maxit(maxitSEXP);
+    Rcpp::traits::input_parameter< const double& >::type tol(tolSEXP);
+    Rcpp::traits::input_parameter< const int& >::type verbose(verboseSEXP);
+    Rcpp::traits::input_parameter< const bool& >::type std(stdSEXP);
+    rcpp_result_gen = Rcpp::wrap(dyn_EMstep(Y, alpha, beta, theta, max_cat, constraint, a0, A0, b0, B0, theta0, Delta0, Delta, session_individual, bill_session, matched_bill, maxit, tol, verbose, std));
+    return rcpp_result_gen;
+END_RCPP
+}
+// prediction
+List prediction(const arma::mat& alpha, const arma::mat& beta, const arma::mat& theta, const arma::vec& max_cat, const arma::vec& bill_session, const String& model, const String& type);
+RcppExport SEXP _pgIRT_prediction(SEXP alphaSEXP, SEXP betaSEXP, SEXP thetaSEXP, SEXP max_catSEXP, SEXP bill_sessionSEXP, SEXP modelSEXP, SEXP typeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type theta(thetaSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type max_cat(max_catSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type bill_session(bill_sessionSEXP);
+    Rcpp::traits::input_parameter< const String& >::type model(modelSEXP);
+    Rcpp::traits::input_parameter< const String& >::type type(typeSEXP);
+    rcpp_result_gen = Rcpp::wrap(prediction(alpha, beta, theta, max_cat, bill_session, model, type));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_pgIRT_Calc_predY_bin", (DL_FUNC) &_pgIRT_Calc_predY_bin, 3},
-    {"_pgIRT_Calc_predY_bin_dyn", (DL_FUNC) &_pgIRT_Calc_predY_bin_dyn, 4},
-    {"_pgIRT_Calc_predY_mlt", (DL_FUNC) &_pgIRT_Calc_predY_mlt, 3},
-    {"_pgIRT_Calc_predY_mlt_dyn", (DL_FUNC) &_pgIRT_Calc_predY_mlt_dyn, 4},
-    {"_pgIRT_get_Eomega_bin", (DL_FUNC) &_pgIRT_get_Eomega_bin, 3},
-    {"_pgIRT_get_Eomega_bin_dyn", (DL_FUNC) &_pgIRT_get_Eomega_bin_dyn, 4},
-    {"_pgIRT_get_Eomega_mlt", (DL_FUNC) &_pgIRT_get_Eomega_mlt, 3},
-    {"_pgIRT_get_Eomega_mlt_dyn", (DL_FUNC) &_pgIRT_get_Eomega_mlt_dyn, 4},
-    {"_pgIRT_organize_Y", (DL_FUNC) &_pgIRT_organize_Y, 3},
-    {"_pgIRT_set_constraint", (DL_FUNC) &_pgIRT_set_constraint, 2},
-    {"_pgIRT_update_alpha_bin", (DL_FUNC) &_pgIRT_update_alpha_bin, 6},
-    {"_pgIRT_update_alpha_bin_dyn", (DL_FUNC) &_pgIRT_update_alpha_bin_dyn, 8},
-    {"_pgIRT_update_alpha_mlt", (DL_FUNC) &_pgIRT_update_alpha_mlt, 7},
-    {"_pgIRT_update_alpha_mlt_dyn", (DL_FUNC) &_pgIRT_update_alpha_mlt_dyn, 9},
-    {"_pgIRT_update_beta_bin", (DL_FUNC) &_pgIRT_update_beta_bin, 6},
-    {"_pgIRT_update_beta_bin_dyn", (DL_FUNC) &_pgIRT_update_beta_bin_dyn, 7},
-    {"_pgIRT_update_beta_mlt", (DL_FUNC) &_pgIRT_update_beta_mlt, 7},
-    {"_pgIRT_update_beta_mlt_dyn", (DL_FUNC) &_pgIRT_update_beta_mlt_dyn, 8},
-    {"_pgIRT_update_theta_bin", (DL_FUNC) &_pgIRT_update_theta_bin, 6},
-    {"_pgIRT_update_theta_bin_dyn", (DL_FUNC) &_pgIRT_update_theta_bin_dyn, 11},
-    {"_pgIRT_update_theta_mlt", (DL_FUNC) &_pgIRT_update_theta_mlt, 9},
-    {"_pgIRT_update_theta_mlt_dyn", (DL_FUNC) &_pgIRT_update_theta_mlt_dyn, 14},
+    {"_pgIRT_EMstep", (DL_FUNC) &_pgIRT_EMstep, 14},
+    {"_pgIRT_dyn_EMstep", (DL_FUNC) &_pgIRT_dyn_EMstep, 20},
+    {"_pgIRT_prediction", (DL_FUNC) &_pgIRT_prediction, 7},
     {NULL, NULL, 0}
 };
 

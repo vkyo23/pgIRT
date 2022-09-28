@@ -16,3 +16,19 @@ pgIRT_boot(fit, boot = 100, verbose = NULL)
 \description{
 \link{pgIRT_boot} implements paramtric bootstrap for pgIRT model to compute statistical uncertainty.
 }
+\examples{
+\dontrun{
+# Multinomial model (K >= 2)
+data(m_data_dyn)
+mat <- make_rollcall(m_data_dyn,
+                     unit_id = "unit",
+                     bill_id = "bill",
+                     vote_col = "vote")
+mat <- clean_rollcall(mat)
+pgfit_mlt <- pgIRT(mat,
+                   model = "default",
+                   constraint = 1)
+boot <- pgIRT_boot(pgfit_mlt, boot = 100, verbose = 10)
+summary(boot)
+}
+}

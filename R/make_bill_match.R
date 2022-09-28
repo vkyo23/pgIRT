@@ -7,6 +7,18 @@
 #' 
 #' @importFrom dplyr %>% mutate select left_join arrange if_else row_number
 #' @export
+#' 
+#' @examples 
+#' data(m_data_dyn)
+#' data(sim_match)
+#' \dontrun{
+#' mat <- make_rollcall(m_data_dyn,
+#'                      unit_id = "unit",
+#'                      bill_id = "bill",
+#'                      vote_col = "vote")
+#' mat <- clean_rollcall(mat)
+#' bill_match <- make_bill_match(mat, sim_match)
+#' }
 
 make_bill_match <- function(data, 
                             bill_pairs) {
@@ -22,7 +34,7 @@ make_bill_match <- function(data,
   matched_res <- rcids %>% 
     dplyr::left_join(bill_pairs %>% 
                        dplyr::select(rcid = rcid1, match = rcid2), by = 'rcid') %>% 
-    dplyr::mutate(number = dplyr::row_number() - 1, .before = rcid) %>% 
+    dplyr::mutate(number = dplyr::row_number(), .before = rcid) %>% 
     dplyr::arrange(rcid)
   
   matched_res <- matched_res %>% 

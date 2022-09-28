@@ -5,6 +5,6 @@
 \alias{pgIRT-package}
 \title{pgIRT: Fast IRT estimation with Polya-Gamma data augmentation and EM Algorithm}
 \description{
-This package implements fast IRT model with Polya-Gamma data augmentation and EM Algorithm.
+This package implements fast IRT model with Polya-Gamma data augmentation and EM Algorithm. The function is available for the data containing K >= 2 response category (binary ~ K-multinomial) and having different categories across items.
 }
 \keyword{internal}

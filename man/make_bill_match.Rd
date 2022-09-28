@@ -15,3 +15,15 @@ which must be matched with the colunm names of \code{data} and the second column
 \description{
 \code{make_bill_match} is an auxiliary function for pgIRT model and generates matched bill indicator for dynamic pgIRT models.
 }
+\examples{
+data(m_data_dyn)
+data(sim_match)
+\dontrun{
+mat <- make_rollcall(m_data_dyn,
+                     unit_id = "unit",
+                     bill_id = "bill",
+                     vote_col = "vote")
+mat <- clean_rollcall(mat)
+bill_match <- make_bill_match(mat, sim_match)
+}
+}

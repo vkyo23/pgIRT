@@ -4,14 +4,16 @@
 \alias{summary.pgIRT_boot}
 \title{Summary function for EM boot}
 \usage{
-\method{summary}{pgIRT_boot}(boot_fit, parameter = c("alpha", "beta", "theta"), ci = 0.95)
+\method{summary}{pgIRT_boot}(object, parameter = c("alpha", "beta", "theta"), ci = 0.95, ...)
 }
 \arguments{
-\item{boot_fit}{an object class of \code{"pgIRT_boot"}}
+\item{object}{an object class of \code{"pgIRT_boot"}}
 
 \item{parameter}{a string or string vector, indicating what parameters you want to get.}
 
 \item{ci}{a float (< 1). The function returns \code{ci} * 100 \% confidence interval.}
+
+\item{...}{parameters to \code{summary()}.}
 }
 \description{
 Summary function for EM boot

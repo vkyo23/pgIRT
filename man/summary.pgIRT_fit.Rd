@@ -4,12 +4,14 @@
 \alias{summary.pgIRT_fit}
 \title{Summary function for EM}
 \usage{
-\method{summary}{pgIRT_fit}(fit, parameter = c("alpha", "beta", "theta"))
+\method{summary}{pgIRT_fit}(object, parameter = c("alpha", "beta", "theta"), ...)
 }
 \arguments{
-\item{fit}{an object class of \code{"pgIRT_fit"}}
+\item{object}{an object class of \code{"pgIRT_fit"}}
 
 \item{parameter}{a string or string vector, indicating what parameters you want to get.}
+
+\item{...}{parameters to \code{summary()}.}
 }
 \description{
 Summary function for EM

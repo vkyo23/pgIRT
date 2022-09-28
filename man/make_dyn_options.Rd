@@ -10,8 +10,8 @@ make_dyn_options(
   bill_id = NULL,
   time_id = NULL,
   vote_col = NULL,
-  bill_match = NULL,
-  drop_unanimous = FALSE
+  add_matched_bill = NULL,
+  clean = FALSE
 )
 }
 \arguments{
@@ -25,11 +25,21 @@ make_dyn_options(
 
 \item{vote_col}{a string, column name which indicates the votes. Only integer or numeric column is allowed.}
 
-\item{bill_match}{(Optional). (Optional). An integer vector which indicates matched bills (the location of matched bills, starts from 0)
+\item{add_matched_bill}{(Optional). An integer vector which indicates matched bills (the location of matched bills, starts from 1)
 and is the same length as the number of bills. If a bill does not have matches, please fill NA. Using \link{make_bill_match} is strongly recommended.}
 
-\item{drop_unanimous}{a bool, whether removing unanimous bills or not. Default is FALSE.}
+\item{clean}{a bool, whether removing noisy bills or not. Default is FALSE.}
 }
 \description{
 \code{make_dyn_options} is an auxiliary function for dynamic pgIRT model and generates options for such models.
+}
+\examples{
+\dontrun{
+data(m_data_dyn)
+ops <- make_dyn_options(m_data_dyn,
+                        unit_id = "unit",
+                        bill_id = "bill",
+                        time_id = "time",
+                        vote_col = "vote")
+}         
 }

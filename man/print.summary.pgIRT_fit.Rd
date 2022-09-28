@@ -2,13 +2,20 @@
 % Please edit documentation in R/summary.pgIRT.R
 \name{print.summary.pgIRT_fit}
 \alias{print.summary.pgIRT_fit}
+\alias{print.summary.pgIRT_boot}
 \title{Print function for EM}
 \usage{
-\method{print}{summary.pgIRT_fit}(object)
+\method{print}{summary.pgIRT_fit}(x, ...)
+
+\method{print}{summary.pgIRT_boot}(x, ...)
 }
 \arguments{
-\item{object}{An output of \code{summary.pgIRT_fit()} function.}
+\item{x}{An output of \code{summary.pgIRT_boot()} function.}
+
+\item{...}{parameters to \code{print()}.}
 }
 \description{
 Print function for EM
+
+Print function for EM boot
 }

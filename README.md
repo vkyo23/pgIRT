@@ -7,12 +7,12 @@
 <!-- badges: end -->
 
 `pgIRT` is an **R** package that implements Item Response Theory (IRT)
-model with Polya-Gamma data augmentation and EM Algorithm. The
-implementation includes binary and multinomial IRT models along with
-dynamic models. The algorithm here is based on the procedure proposed by
-Goplerud (2019). This package also utilizes the parametric bootstrap
-method proposed by Lewis and Poole (2004) to estimate confidence
-interval.
+model with Polya-Gamma data augmentation and EM Algorithm. The function
+is available for the data containing K \>= 2 response category (binary
+\~ K-multinomial) and having different categories across items. The
+algorithm here is based on Goplerud (2019). This package also utilizes
+the parametric bootstrap method proposed by Lewis and Poole (2004) to
+estimate confidence interval.
 
 ## Installation
 
@@ -27,55 +27,52 @@ remotes::install_github("vkyo23/pgIRT")
 
 ### Binary IRT
 
-Using `Senate` data from `MCMCpack`.
+Monte Carlo simulation:
 
 ``` r
 library(pgIRT)
 require(dplyr)
 require(tidyr)
+set.seed(1)
 
-data(Senate, package = "MCMCpack")
-mat <- as.matrix(Senate[, 6:ncol(Senate)])
-colnames(mat) <- 1:ncol(mat)
-rownames(mat) <- 1:nrow(mat)
+# Number of individuals and items
+I <- 100 
+J <- 1000
 
-# `make_init` is an auxiliary function which computes initial values for `pgIRT`.
-init <- make_init(mat, model = "bin")
-fit <- pgIRT(mat, 
-             model = "bin",
-             init = init,
-             verbose = 20)
+# DGP
+theta_true <- seq(-2, 2, length = I)
+alpha_true <- rnorm(J)
+beta_true <- rnorm(J)
+Y_star <- cbind(1, theta_true) %*% rbind(alpha_true, beta_true)
+Y <- matrix(rbinom(I * J, 1, plogis(Y_star)), I, J)
+```
+
+Function `pgIRT` implements IRT. Please note that the elements of an
+input matrix should start from 1, not 0. Then, I convert 0 into 2.
+
+``` r
+Y[Y == 0] <- 2 
+pgfit <- pgIRT(Y,
+               model = "default",
+               constraint = which.max(theta_true))
 #> =========================================================================
 #> Polya-Gamma data augmentation Item Response Theory Model via EM Algorithm
-#> Model = Binomial 
 #> =========================================================================
-#> Iteration 20 : eval = alpha 2.480436e-05 elapsed 0.1 sec
-#> Iteration 40 : eval = alpha 4.468147e-06 elapsed 0.1 sec
-#> Iteration 60 : eval = alpha 1.615617e-06 elapsed 0.2 sec
-#> Model converged at iteration 72 : 0.2 sec
+#> = Format ------> Binary
+#> = Model -------> Default pgIRT 
+#> =
+#> ---------- Implementing EM ----------
+#> Model converged at iteration 28 : 0.9 sec.
 
-summary(fit, parameter = "theta")
-#> =============== Parameter = theta =============== 
-#> # A tibble: 102 x 3
-#>    variable unit_id estimate
-#>    <chr>      <dbl>    <dbl>
-#>  1 theta          1    1.84 
-#>  2 theta          2    1.48 
-#>  3 theta          3    1.80 
-#>  4 theta          4    1.02 
-#>  5 theta          5    2.05 
-#>  6 theta          6    0.833
-#>  7 theta          7    1.84 
-#>  8 theta          8   -1.04 
-#>  9 theta          9   -3.28 
-#> 10 theta         10   -1.35 
-#> # ... with 92 more rows
+cor(pgfit$parameter$theta, theta_true)
+#>              [,1]
+#> theta_1 0.9957472
 ```
 
 ### Dynamic binary IRT
 
 Using `Rehnquist` data from `MCMCpack`. To introduce some auxiliary
-function of `pgIRT`, I fisrt construct long-format dataframe.
+function of `pgIRT`, I first construct long-format dataframe.
 
 ``` r
 # Convert into long-format dataframe
@@ -93,14 +90,14 @@ head(long_df) %>%
   knitr::kable()
 ```
 
-| time | rcid | name      | value | judge\_id |
-|-----:|-----:|:----------|------:|----------:|
-|    0 |    1 | Rehnquist |     0 |         1 |
-|    0 |    1 | Stevens   |     1 |         2 |
-|    0 |    1 | O.Connor  |     0 |         3 |
-|    0 |    1 | Scalia    |     0 |         4 |
-|    0 |    1 | Kennedy   |     1 |         5 |
-|    0 |    1 | Souter    |     1 |         6 |
+| time | rcid | name      | value | judge_id |
+|-----:|-----:|:----------|------:|---------:|
+|    0 |    1 | Rehnquist |     0 |        1 |
+|    0 |    1 | Stevens   |     1 |        2 |
+|    0 |    1 | O.Connor  |     0 |        3 |
+|    0 |    1 | Scalia    |     0 |        4 |
+|    0 |    1 | Kennedy   |     1 |        5 |
+|    0 |    1 | Souter    |     1 |        6 |
 
 ``` r
 # Generating roll-call matrix from long-format dataframe
@@ -108,34 +105,31 @@ mat_dyn <- make_rollcall(long_df,
                          unit_id = "judge_id", 
                          bill_id = "rcid",
                          vote_col = "value")
-
-# Initial values
+rownames(mat_dyn) <- jname$name
+mat_dyn[mat_dyn == 0] <- 2
 constraint_dyn <- jname$judge_id[jname$name == "Thomas"]
-init_dyn <- make_init(mat_dyn,
-                      model = "bin_dyn",
-                      T = length(unique(long_df$time)),
-                      constraint = constraint_dyn)
 
-# Generating options for dynamic estimation
+# Options for dynamic estimation
 dyn_ops <- make_dyn_options(long_df,
                             unit_id = "judge_id",
                             bill_id = "rcid",
                             time_id = "time",
                             vote_col = "value")
-
-# IRT
 fit_dyn <- pgIRT(mat_dyn,
-             model = "bin_dyn",
-             init = init_dyn,
-             constraint = constraint_dyn,
-             dyn_options = dyn_ops,
-             verbose = 20)
+                 model = "dynamic",
+                 constraint = constraint_dyn,
+                 dyn_options = dyn_ops,
+                 verbose = 10)
 #> =========================================================================
 #> Polya-Gamma data augmentation Item Response Theory Model via EM Algorithm
-#> Model = Dynamic Binomial 
 #> =========================================================================
-#> Iteration 20 : eval = beta 1.025311e-05 elapsed 0 sec
-#> Model converged at iteration 34 : 0 sec
+#> = Format ------> Binary
+#> = Model -------> Dynamic pgIRT 
+#> =
+#> ---------- Implementing EM ----------
+#> Iteration 10: eval = 5.72897e-05
+#> Iteration 20: eval = 1.91845e-06
+#> Model converged at iteration 22 : 0 sec.
 ```
 
 To compute confidence interval, run bootstrap via `pgIRT_boot`:
@@ -144,135 +138,118 @@ To compute confidence interval, run bootstrap via `pgIRT_boot`:
 # Bootstrap
 boot <- pgIRT_boot(fit_dyn, boot = 100, verbose = 20)
 #> ================================================================
-#> Parametric Bootstrap for pgIRT ( Dynamic Binomial )
+#> Parametric Bootstrap for pgIRT ( Dynamic model )
 #> ================================================================
-#> Boostrap 20 DONE : 0.7 sec
-#> Boostrap 40 DONE : 1.6 sec
-#> Boostrap 60 DONE : 2.3 sec
-#> Boostrap 80 DONE : 2.9 sec
-#> Boostrap 100 DONE : 3.6 sec
+#> Boostrap 20 DONE : 1.2 sec
+#> Boostrap 40 DONE : 2.4 sec
+#> Boostrap 60 DONE : 3.6 sec
+#> Boostrap 80 DONE : 4.7 sec
+#> Boostrap 100 DONE : 6 sec
 
 summary(boot, parameter = "theta", ci = .95)
 #> ==================== Parameter = theta ==================== 
-#> # A tibble: 99 x 7
-#>    variable unit_id session ci    estimate   lwr   upr
-#>    <chr>      <dbl>   <int> <chr>    <dbl> <dbl> <dbl>
-#>  1 theta          1       1 95%      0.987 0.837  1.13
-#>  2 theta          1       2 95%      0.973 0.846  1.11
-#>  3 theta          1       3 95%      0.943 0.807  1.08
-#>  4 theta          1       4 95%      0.928 0.783  1.07
-#>  5 theta          1       5 95%      0.962 0.824  1.10
-#>  6 theta          1       6 95%      0.947 0.821  1.08
-#>  7 theta          1       7 95%      0.957 0.826  1.10
-#>  8 theta          1       8 95%      0.927 0.788  1.07
-#>  9 theta          1       9 95%      0.902 0.752  1.05
-#> 10 theta          1      10 95%      0.934 0.797  1.08
-#> # ... with 89 more rows
+#> # A tibble: 99 × 7
+#>    unit      variable session ci       lwr estimate    upr
+#>    <chr>     <chr>      <int> <chr>  <dbl>    <dbl>  <dbl>
+#>  1 Rehnquist theta          1 95%    0.937    1.08   1.20 
+#>  2 Stevens   theta          1 95%   -1.67    -1.55  -1.45 
+#>  3 O.Connor  theta          1 95%    0.285    0.450  0.622
+#>  4 Scalia    theta          1 95%    1.12     1.24   1.35 
+#>  5 Kennedy   theta          1 95%    0.294    0.460  0.605
+#>  6 Souter    theta          1 95%   -1.20    -1.08  -0.937
+#>  7 Thomas    theta          1 95%    1.25     1.38   1.49 
+#>  8 Ginsburg  theta          1 95%   -1.27    -1.11  -0.970
+#>  9 Breyer    theta          1 95%   -0.937   -0.813 -0.696
+#> 10 Rehnquist theta          2 95%    0.939    1.08   1.20 
+#> # … with 89 more rows
 ```
 
 ### Multinomial IRT
 
-Using a simulated voting data `m_data`.
+Using simulated a multinomial response data (`m_data_dyn`) data.
 
 ``` r
-data("m_data")
-
-init_mlt <- make_init(m_data,
-                      model = "multi")
-fit_mlt <- pgIRT(m_data,
-                 model = "multi",
-                 init = init_mlt, 
-                 constraint = 1,
-                 verbose = 20)
-#> =========================================================================
-#> Polya-Gamma data augmentation Item Response Theory Model via EM Algorithm
-#> Model = Multinomial 
-#> =========================================================================
-#> Iteration 20 : eval = beta2 0.000277376 elapsed 0 sec
-#> Iteration 40 : eval = beta2 9.464876e-06 elapsed 0 sec
-#> Model converged at iteration 55 : 0 sec
-
-summary(fit_mlt, parameter = c("alpha", "beta"))
-#> =============== Parameter = alpha =============== 
-#> # A tibble: 30 x 3
-#>    variable bill_id estimate
-#>    <chr>      <dbl>    <dbl>
-#>  1 alpha1         1   -1.93 
-#>  2 alpha1         2    1.10 
-#>  3 alpha1         3    0.627
-#>  4 alpha1         4   -2.31 
-#>  5 alpha1         5   -1.85 
-#>  6 alpha1         6    3.10 
-#>  7 alpha1         7    4.66 
-#>  8 alpha1         8    1.61 
-#>  9 alpha1         9    1.21 
-#> 10 alpha1        10   -0.286
-#> # ... with 20 more rows
-#> =============== Parameter = beta =============== 
-#> # A tibble: 30 x 3
-#>    variable bill_id estimate
-#>    <chr>      <dbl>    <dbl>
-#>  1 beta1          1    -5.75
-#>  2 beta1          2    -4.15
-#>  3 beta1          3    -4.94
-#>  4 beta1          4    -5.98
-#>  5 beta1          5    -5.58
-#>  6 beta1          6    -1.10
-#>  7 beta1          7    -2.12
-#>  8 beta1          8    -4.90
-#>  9 beta1          9    -5.18
-#> 10 beta1         10    -5.38
-#> # ... with 20 more rows
-```
-
-### Dynamic multinomial IRT
-
-Using a simulated voting data (long-format dataframe) `m_data_dyn` and a
-simulated matching bill data `sim_match` for dynamic estimation (See
-more detail of across time estimation in Bailey (2007)).
-
-``` r
-# multinomial dynamic
-data("m_data_dyn")
-data("sim_match")
+data(m_data_dyn)
 
 m_mlt_d <- make_rollcall(m_data_dyn,
                          unit_id = "unit",
                          bill_id = "bill",
-                         vote_col = "vote",
-                         drop_unanimous = TRUE)
+                         vote_col = "vote") %>% 
+  clean_rollcall()
 #> Remove some bills because they are unanimous votings: 4 9 14 20 32 53 58 77 79 96 100
+
+fit_mlt <- pgIRT(m_mlt_d,
+                 model = "default",
+                 constraint = 1,
+                 verbose = 20)
+#> =========================================================================
+#> Polya-Gamma data augmentation Item Response Theory Model via EM Algorithm
+#> =========================================================================
+#> = Format ------> Multinomial (# of categories: Min = 2 / Max = 3 )
+#> = Model -------> Default pgIRT 
+#> =
+#> ---------- Implementing EM ----------
+#> Iteration 20: eval = 5.92125e-05
+#> Iteration 40: eval = 1.22543e-05
+#> Iteration 60: eval = 3.6913e-06
+#> Iteration 80: eval = 1.31633e-06
+#> Model converged at iteration 87 : 0.6 sec.
+
+summary(fit_mlt)$theta
+#> # A tibble: 100 × 3
+#>    unit  variable estimate
+#>    <chr> <chr>       <dbl>
+#>  1 1     theta       5.46 
+#>  2 2     theta       1.17 
+#>  3 3     theta      -1.45 
+#>  4 4     theta      -2.99 
+#>  5 5     theta      -1.01 
+#>  6 6     theta      -1.45 
+#>  7 7     theta      -1.46 
+#>  8 8     theta      -1.44 
+#>  9 9     theta      -1.45 
+#> 10 10    theta      -0.747
+#> # … with 90 more rows
+```
+
+### Dynamic multinomial IRT
+
+Using the simulated response data and a simulated matching bill data
+`sim_match` for dynamic estimation (See more detail of across time
+estimation in Bailey (2007)).
+
+``` r
+# multinomial dynamic
+data(sim_match)
 
 # Generating matching bill indicator for across time estimation
 bill_match <- make_bill_match(m_mlt_d, sim_match)
-init_mlt_d <- make_init(m_mlt_d, 
-                        model = "multi_dyn",
-                        T = length(unique(m_data_dyn$time)),
-                        bill_match = bill_match,
-                        constraint = 1)
 
 dyn_ops_mlt <- make_dyn_options(m_data_dyn,
                                 unit_id = "unit",
                                 bill_id = "bill",
                                 time_id = "time",
                                 vote_col = "vote",
-                                bill_match = bill_match,
-                                drop_unanimous = TRUE)
+                                add_matched_bill = bill_match,
+                                clean = TRUE)
 #> Remove some bills because they are unanimous votings: 4 9 14 20 32 53 58 77 79 96 100
 
 fit_mlt_d <- pgIRT(m_mlt_d,
-                   mode = "multi_dyn",
-                   init = init_mlt_d,
+                   mode = "dynamic",
                    constraint = 1,
                    dyn_options = dyn_ops_mlt,
                    verbose = 20)
 #> =========================================================================
 #> Polya-Gamma data augmentation Item Response Theory Model via EM Algorithm
-#> Model = Dynamic Multinomial 
 #> =========================================================================
-#> Iteration 20 : eval = alpha2 0.0001816278 elapsed 0.1 sec
-#> Iteration 40 : eval = alpha2 2.649164e-06 elapsed 0.2 sec
-#> Model converged at iteration 46 : 0.2 sec
+#> = Format ------> Multinomial (# of categories: Min = 2 / Max = 3 )
+#> = Model -------> Dynamic pgIRT 
+#> =
+#> ---------- Implementing EM ----------
+#> Iteration 20: eval = 1.28497e-05
+#> Iteration 40: eval = 2.30141e-06
+#> Iteration 60: eval = 1.35263e-06
+#> Model converged at iteration 74 : 0.8 sec.
 ```
 
 Returning 99% confidence interval:
@@ -280,30 +257,30 @@ Returning 99% confidence interval:
 ``` r
 boot_mlt_d <- pgIRT_boot(fit_mlt_d, boot = 100, verbose = 20)
 #> ================================================================
-#> Parametric Bootstrap for pgIRT ( Dynamic Multinomial )
+#> Parametric Bootstrap for pgIRT ( Dynamic model )
 #> ================================================================
-#> Boostrap 20 DONE : 3.8 sec
-#> Boostrap 40 DONE : 7.5 sec
-#> Boostrap 60 DONE : 11.1 sec
-#> Boostrap 80 DONE : 14.9 sec
-#> Boostrap 100 DONE : 18.6 sec
+#> Boostrap 20 DONE : 11.5 sec
+#> Boostrap 40 DONE : 25.4 sec
+#> Boostrap 60 DONE : 37.4 sec
+#> Boostrap 80 DONE : 50 sec
+#> Boostrap 100 DONE : 65.5 sec
 
 summary(boot_mlt_d, parameter = "theta", ci = .99)
 #> ==================== Parameter = theta ==================== 
-#> # A tibble: 1,000 x 7
-#>    variable unit_id session ci    estimate   lwr   upr
-#>    <chr>      <dbl>   <int> <chr>    <dbl> <dbl> <dbl>
-#>  1 theta          1       1 99%       2.34  2.09  2.58
-#>  2 theta          1       2 99%       2.33  2.07  2.58
-#>  3 theta          1       3 99%       2.34  2.08  2.58
-#>  4 theta          1       4 99%       2.33  2.10  2.57
-#>  5 theta          1       5 99%       2.33  2.13  2.58
-#>  6 theta          1       6 99%       2.33  2.13  2.57
-#>  7 theta          1       7 99%       2.32  2.10  2.57
-#>  8 theta          1       8 99%       2.31  2.12  2.56
-#>  9 theta          1       9 99%       2.32  2.12  2.56
-#> 10 theta          1      10 99%       2.33  2.12  2.59
-#> # ... with 990 more rows
+#> # A tibble: 985 × 7
+#>    unit  variable session ci       lwr estimate     upr
+#>    <chr> <chr>      <int> <chr>  <dbl>    <dbl>   <dbl>
+#>  1 1     theta          1 99%    0.921    1.01   1.09  
+#>  2 2     theta          1 99%    0.380    0.467  0.560 
+#>  3 3     theta          1 99%   -0.358   -0.317 -0.262 
+#>  4 4     theta          1 99%   -0.276   -0.217 -0.153 
+#>  5 5     theta          1 99%   -0.241   -0.177 -0.0931
+#>  6 6     theta          1 99%   -0.365   -0.318 -0.261 
+#>  7 7     theta          1 99%   -0.378   -0.323 -0.272 
+#>  8 8     theta          1 99%   -0.353   -0.299 -0.236 
+#>  9 9     theta          1 99%   -0.361   -0.317 -0.269 
+#> 10 10    theta          1 99%   -0.237   -0.179 -0.119 
+#> # … with 975 more rows
 ```
 
 ## References

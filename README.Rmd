@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-`pgIRT` is an **R** package that implements Item Response Theory (IRT) model with Polya-Gamma data augmentation and EM Algorithm. The implementation includes binary and multinomial IRT models along with dynamic models. The algorithm here is based on the procedure proposed by Goplerud (2019). This package also utilizes the parametric bootstrap method proposed by Lewis and Poole (2004) to estimate confidence interval.
+`pgIRT` is an **R** package that implements Item Response Theory (IRT) model with Polya-Gamma data augmentation and EM Algorithm. The function is available for the data containing K >= 2 response category (binary ~ K-multinomial) and having different categories across items. The algorithm here is based on Goplerud (2019). This package also utilizes the parametric bootstrap method proposed by Lewis and Poole (2004) to estimate confidence interval.
 
 ## Installation
 
@@ -33,31 +33,40 @@ remotes::install_github("vkyo23/pgIRT")
 
 ### Binary IRT
 
-Using `Senate` data from `MCMCpack`. 
+Monte Carlo simulation:
 
 ```{r}
 library(pgIRT)
 require(dplyr)
 require(tidyr)
+set.seed(1)
 
-data(Senate, package = "MCMCpack")
-mat <- as.matrix(Senate[, 6:ncol(Senate)])
-colnames(mat) <- 1:ncol(mat)
-rownames(mat) <- 1:nrow(mat)
+# Number of individuals and items
+I <- 100 
+J <- 1000
 
-# `make_init` is an auxiliary function which computes initial values for `pgIRT`.
-init <- make_init(mat, model = "bin")
-fit <- pgIRT(mat, 
-             model = "bin",
-             init = init,
-             verbose = 20)
+# DGP
+theta_true <- seq(-2, 2, length = I)
+alpha_true <- rnorm(J)
+beta_true <- rnorm(J)
+Y_star <- cbind(1, theta_true) %*% rbind(alpha_true, beta_true)
+Y <- matrix(rbinom(I * J, 1, plogis(Y_star)), I, J)
+```
 
-summary(fit, parameter = "theta")
+Function `pgIRT` implements IRT. Please note that the elements of an input matrix should start from 1, not 0. Then, I convert 0 into 2.
+
+```{r}
+Y[Y == 0] <- 2 
+pgfit <- pgIRT(Y,
+               model = "default",
+               constraint = which.max(theta_true))
+
+cor(pgfit$parameter$theta, theta_true)
 ```
 
 ### Dynamic binary IRT
 
-Using `Rehnquist` data from `MCMCpack`. To introduce some auxiliary function of `pgIRT`, I fisrt construct long-format dataframe.
+Using `Rehnquist` data from `MCMCpack`. To introduce some auxiliary function of `pgIRT`, I first construct long-format dataframe.
 
 ```{r}
 # Convert into long-format dataframe
@@ -82,28 +91,21 @@ mat_dyn <- make_rollcall(long_df,
                          unit_id = "judge_id", 
                          bill_id = "rcid",
                          vote_col = "value")
-
-# Initial values
+rownames(mat_dyn) <- jname$name
+mat_dyn[mat_dyn == 0] <- 2
 constraint_dyn <- jname$judge_id[jname$name == "Thomas"]
-init_dyn <- make_init(mat_dyn,
-                      model = "bin_dyn",
-                      T = length(unique(long_df$time)),
-                      constraint = constraint_dyn)
 
-# Generating options for dynamic estimation
+# Options for dynamic estimation
 dyn_ops <- make_dyn_options(long_df,
                             unit_id = "judge_id",
                             bill_id = "rcid",
                             time_id = "time",
                             vote_col = "value")
-
-# IRT
 fit_dyn <- pgIRT(mat_dyn,
-             model = "bin_dyn",
-             init = init_dyn,
-             constraint = constraint_dyn,
-             dyn_options = dyn_ops,
-             verbose = 20)
+                 model = "dynamic",
+                 constraint = constraint_dyn,
+                 dyn_options = dyn_ops,
+                 verbose = 10)
 ```
 
 To compute confidence interval, run bootstrap via `pgIRT_boot`:
@@ -118,57 +120,47 @@ summary(boot, parameter = "theta", ci = .95)
 
 ### Multinomial IRT
 
-Using a simulated voting data `m_data`.
+Using simulated a multinomial response data (`m_data_dyn`) data.
 
 ```{r}
-data("m_data")
+data(m_data_dyn)
 
-init_mlt <- make_init(m_data,
-                      model = "multi")
-fit_mlt <- pgIRT(m_data,
-                 model = "multi",
-                 init = init_mlt, 
+m_mlt_d <- make_rollcall(m_data_dyn,
+                         unit_id = "unit",
+                         bill_id = "bill",
+                         vote_col = "vote") %>% 
+  clean_rollcall()
+
+fit_mlt <- pgIRT(m_mlt_d,
+                 model = "default",
                  constraint = 1,
                  verbose = 20)
 
-summary(fit_mlt, parameter = c("alpha", "beta"))
+summary(fit_mlt)$theta
 ```
 
 
 ### Dynamic multinomial IRT
 
-Using a simulated voting data (long-format dataframe) `m_data_dyn` and a simulated matching bill data `sim_match` for dynamic estimation (See more detail of across time estimation in Bailey (2007)).
+Using the simulated response data and a simulated matching bill data `sim_match` for dynamic estimation (See more detail of across time estimation in Bailey (2007)).
 
 ```{r}
 # multinomial dynamic
-data("m_data_dyn")
-data("sim_match")
-
-m_mlt_d <- make_rollcall(m_data_dyn,
-                         unit_id = "unit",
-                         bill_id = "bill",
-                         vote_col = "vote",
-                         drop_unanimous = TRUE)
+data(sim_match)
 
 # Generating matching bill indicator for across time estimation
 bill_match <- make_bill_match(m_mlt_d, sim_match)
-init_mlt_d <- make_init(m_mlt_d, 
-                        model = "multi_dyn",
-                        T = length(unique(m_data_dyn$time)),
-                        bill_match = bill_match,
-                        constraint = 1)
 
 dyn_ops_mlt <- make_dyn_options(m_data_dyn,
                                 unit_id = "unit",
                                 bill_id = "bill",
                                 time_id = "time",
                                 vote_col = "vote",
-                                bill_match = bill_match,
-                                drop_unanimous = TRUE)
+                                add_matched_bill = bill_match,
+                                clean = TRUE)
 
 fit_mlt_d <- pgIRT(m_mlt_d,
-                   mode = "multi_dyn",
-                   init = init_mlt_d,
+                   mode = "dynamic",
                    constraint = 1,
                    dyn_options = dyn_ops_mlt,
                    verbose = 20)

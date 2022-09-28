@@ -3,16 +3,15 @@
 
 # pgIRT
 
-<!-- badges: start -->
-<!-- badges: end -->
-
 `pgIRT` is an **R** package that implements Item Response Theory (IRT)
 model with Polya-Gamma data augmentation and EM Algorithm. The function
-is available for the data containing K \>= 2 response category (binary
-\~ K-multinomial) and having different categories across items. The
+is available for the data containing K &gt;= 2 response category (binary
+\~ K-multinomial) and having different categories across items. In
+addition, the implementation includes the dynamic IRT model. The
 algorithm here is based on Goplerud (2019). This package also utilizes
 the parametric bootstrap method proposed by Lewis and Poole (2004) to
-estimate confidence interval.
+estimate confidence interval. <!-- badges: start -->
+<!-- badges: end -->
 
 ## Installation
 
@@ -62,7 +61,7 @@ pgfit <- pgIRT(Y,
 #> = Model -------> Default pgIRT 
 #> =
 #> ---------- Implementing EM ----------
-#> Model converged at iteration 28 : 0.9 sec.
+#> Model converged at iteration 28 : 0.3 sec.
 
 cor(pgfit$parameter$theta, theta_true)
 #>              [,1]
@@ -90,14 +89,14 @@ head(long_df) %>%
   knitr::kable()
 ```
 
-| time | rcid | name      | value | judge_id |
-|-----:|-----:|:----------|------:|---------:|
-|    0 |    1 | Rehnquist |     0 |        1 |
-|    0 |    1 | Stevens   |     1 |        2 |
-|    0 |    1 | O.Connor  |     0 |        3 |
-|    0 |    1 | Scalia    |     0 |        4 |
-|    0 |    1 | Kennedy   |     1 |        5 |
-|    0 |    1 | Souter    |     1 |        6 |
+| time | rcid | name      | value | judge\_id |
+|-----:|-----:|:----------|------:|----------:|
+|    0 |    1 | Rehnquist |     0 |         1 |
+|    0 |    1 | Stevens   |     1 |         2 |
+|    0 |    1 | O.Connor  |     0 |         3 |
+|    0 |    1 | Scalia    |     0 |         4 |
+|    0 |    1 | Kennedy   |     1 |         5 |
+|    0 |    1 | Souter    |     1 |         6 |
 
 ``` r
 # Generating roll-call matrix from long-format dataframe
@@ -140,15 +139,15 @@ boot <- pgIRT_boot(fit_dyn, boot = 100, verbose = 20)
 #> ================================================================
 #> Parametric Bootstrap for pgIRT ( Dynamic model )
 #> ================================================================
-#> Boostrap 20 DONE : 1.2 sec
-#> Boostrap 40 DONE : 2.4 sec
-#> Boostrap 60 DONE : 3.6 sec
-#> Boostrap 80 DONE : 4.7 sec
-#> Boostrap 100 DONE : 6 sec
+#> Boostrap 20 DONE : 0.9 sec
+#> Boostrap 40 DONE : 1.6 sec
+#> Boostrap 60 DONE : 2.4 sec
+#> Boostrap 80 DONE : 3.1 sec
+#> Boostrap 100 DONE : 3.9 sec
 
 summary(boot, parameter = "theta", ci = .95)
 #> ==================== Parameter = theta ==================== 
-#> # A tibble: 99 × 7
+#> # A tibble: 99 x 7
 #>    unit      variable session ci       lwr estimate    upr
 #>    <chr>     <chr>      <int> <chr>  <dbl>    <dbl>  <dbl>
 #>  1 Rehnquist theta          1 95%    0.937    1.08   1.20 
@@ -161,12 +160,12 @@ summary(boot, parameter = "theta", ci = .95)
 #>  8 Ginsburg  theta          1 95%   -1.27    -1.11  -0.970
 #>  9 Breyer    theta          1 95%   -0.937   -0.813 -0.696
 #> 10 Rehnquist theta          2 95%    0.939    1.08   1.20 
-#> # … with 89 more rows
+#> # ... with 89 more rows
 ```
 
 ### Multinomial IRT
 
-Using simulated a multinomial response data (`m_data_dyn`) data.
+Using a simulated multinomial response data (`m_data_dyn`) data.
 
 ``` r
 data(m_data_dyn)
@@ -193,10 +192,10 @@ fit_mlt <- pgIRT(m_mlt_d,
 #> Iteration 40: eval = 1.22543e-05
 #> Iteration 60: eval = 3.6913e-06
 #> Iteration 80: eval = 1.31633e-06
-#> Model converged at iteration 87 : 0.6 sec.
+#> Model converged at iteration 87 : 0.1 sec.
 
 summary(fit_mlt)$theta
-#> # A tibble: 100 × 3
+#> # A tibble: 100 x 3
 #>    unit  variable estimate
 #>    <chr> <chr>       <dbl>
 #>  1 1     theta       5.46 
@@ -209,7 +208,7 @@ summary(fit_mlt)$theta
 #>  8 8     theta      -1.44 
 #>  9 9     theta      -1.45 
 #> 10 10    theta      -0.747
-#> # … with 90 more rows
+#> # ... with 90 more rows
 ```
 
 ### Dynamic multinomial IRT
@@ -249,7 +248,7 @@ fit_mlt_d <- pgIRT(m_mlt_d,
 #> Iteration 20: eval = 1.28497e-05
 #> Iteration 40: eval = 2.30141e-06
 #> Iteration 60: eval = 1.35263e-06
-#> Model converged at iteration 74 : 0.8 sec.
+#> Model converged at iteration 74 : 0.4 sec.
 ```
 
 Returning 99% confidence interval:
@@ -259,15 +258,15 @@ boot_mlt_d <- pgIRT_boot(fit_mlt_d, boot = 100, verbose = 20)
 #> ================================================================
 #> Parametric Bootstrap for pgIRT ( Dynamic model )
 #> ================================================================
-#> Boostrap 20 DONE : 11.5 sec
-#> Boostrap 40 DONE : 25.4 sec
-#> Boostrap 60 DONE : 37.4 sec
-#> Boostrap 80 DONE : 50 sec
-#> Boostrap 100 DONE : 65.5 sec
+#> Boostrap 20 DONE : 5.2 sec
+#> Boostrap 40 DONE : 10.9 sec
+#> Boostrap 60 DONE : 15.8 sec
+#> Boostrap 80 DONE : 21.2 sec
+#> Boostrap 100 DONE : 26.1 sec
 
 summary(boot_mlt_d, parameter = "theta", ci = .99)
 #> ==================== Parameter = theta ==================== 
-#> # A tibble: 985 × 7
+#> # A tibble: 985 x 7
 #>    unit  variable session ci       lwr estimate     upr
 #>    <chr> <chr>      <int> <chr>  <dbl>    <dbl>   <dbl>
 #>  1 1     theta          1 99%    0.921    1.01   1.09  
@@ -280,7 +279,7 @@ summary(boot_mlt_d, parameter = "theta", ci = .99)
 #>  8 8     theta          1 99%   -0.353   -0.299 -0.236 
 #>  9 9     theta          1 99%   -0.361   -0.317 -0.269 
 #> 10 10    theta          1 99%   -0.237   -0.179 -0.119 
-#> # … with 975 more rows
+#> # ... with 975 more rows
 ```
 
 ## References

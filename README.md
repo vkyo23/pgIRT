@@ -57,11 +57,11 @@ pgfit <- pgIRT(Y,
 #> =========================================================================
 #> Polya-Gamma data augmentation Item Response Theory Model via EM Algorithm
 #> =========================================================================
-#> = Format ------> Binary
-#> = Model -------> Default pgIRT 
-#> =
-#> ---------- Implementing EM ----------
-#> Model converged at iteration 28 : 0.3 sec.
+#> * Format ------> Binary
+#> * Model -------> Default pgIRT 
+#> *
+#> === Expectation-Maximization ===
+#> Model converged at iteration 28 : 0.4 sec.
 
 cor(pgfit$parameter$theta, theta_true)
 #>              [,1]
@@ -104,6 +104,7 @@ mat_dyn <- make_rollcall(long_df,
                          unit_id = "judge_id", 
                          bill_id = "rcid",
                          vote_col = "value")
+#> * Created 9 x 485 matrix.
 rownames(mat_dyn) <- jname$name
 mat_dyn[mat_dyn == 0] <- 2
 constraint_dyn <- jname$judge_id[jname$name == "Thomas"]
@@ -122,13 +123,14 @@ fit_dyn <- pgIRT(mat_dyn,
 #> =========================================================================
 #> Polya-Gamma data augmentation Item Response Theory Model via EM Algorithm
 #> =========================================================================
-#> = Format ------> Binary
-#> = Model -------> Dynamic pgIRT 
-#> =
-#> ---------- Implementing EM ----------
-#> Iteration 10: eval = 5.72897e-05
-#> Iteration 20: eval = 1.91845e-06
-#> Model converged at iteration 22 : 0 sec.
+#> * Format ------> Binary
+#> * Model -------> Dynamic pgIRT 
+#> *
+#> === Expectation-Maximization ===
+#> Iteration 10: eval = 6.69532e-05
+#> Iteration 20: eval = 6.36456e-06
+#> Iteration 30: eval = 1.31581e-06
+#> Model converged at iteration 33 : 0 sec.
 ```
 
 To compute confidence interval, run bootstrap via `pgIRT_boot`:
@@ -139,27 +141,27 @@ boot <- pgIRT_boot(fit_dyn, boot = 100, verbose = 20)
 #> ================================================================
 #> Parametric Bootstrap for pgIRT ( Dynamic model )
 #> ================================================================
-#> Boostrap 20 DONE : 0.9 sec
-#> Boostrap 40 DONE : 1.6 sec
-#> Boostrap 60 DONE : 2.4 sec
-#> Boostrap 80 DONE : 3.1 sec
-#> Boostrap 100 DONE : 3.9 sec
+#> Boostrap 20 DONE : 1.1 sec
+#> Boostrap 40 DONE : 2.1 sec
+#> Boostrap 60 DONE : 2.9 sec
+#> Boostrap 80 DONE : 3.6 sec
+#> Boostrap 100 DONE : 4.7 sec
 
 summary(boot, parameter = "theta", ci = .95)
 #> ==================== Parameter = theta ==================== 
 #> # A tibble: 99 x 7
 #>    unit      variable session ci       lwr estimate    upr
 #>    <chr>     <chr>      <int> <chr>  <dbl>    <dbl>  <dbl>
-#>  1 Rehnquist theta          1 95%    0.937    1.08   1.20 
-#>  2 Stevens   theta          1 95%   -1.67    -1.55  -1.45 
-#>  3 O.Connor  theta          1 95%    0.285    0.450  0.622
-#>  4 Scalia    theta          1 95%    1.12     1.24   1.35 
-#>  5 Kennedy   theta          1 95%    0.294    0.460  0.605
-#>  6 Souter    theta          1 95%   -1.20    -1.08  -0.937
-#>  7 Thomas    theta          1 95%    1.25     1.38   1.49 
-#>  8 Ginsburg  theta          1 95%   -1.27    -1.11  -0.970
-#>  9 Breyer    theta          1 95%   -0.937   -0.813 -0.696
-#> 10 Rehnquist theta          2 95%    0.939    1.08   1.20 
+#>  1 Rehnquist theta          1 95%    0.838    0.988  1.13 
+#>  2 Stevens   theta          1 95%   -2.45    -2.33  -2.23 
+#>  3 O.Connor  theta          1 95%    0.156    0.303  0.448
+#>  4 Scalia    theta          1 95%    1.49     1.71   1.90 
+#>  5 Kennedy   theta          1 95%    0.162    0.314  0.480
+#>  6 Souter    theta          1 95%   -0.932   -0.713 -0.543
+#>  7 Thomas    theta          1 95%    1.72     1.89   2.06 
+#>  8 Ginsburg  theta          1 95%   -1.08    -0.931 -0.725
+#>  9 Breyer    theta          1 95%   -0.971   -0.740 -0.547
+#> 10 Rehnquist theta          2 95%    0.841    0.975  1.10 
 #> # ... with 89 more rows
 ```
 
@@ -175,7 +177,9 @@ m_mlt_d <- make_rollcall(m_data_dyn,
                          bill_id = "bill",
                          vote_col = "vote") %>% 
   clean_rollcall()
-#> Remove some bills because they are unanimous votings: 4 9 14 20 32 53 58 77 79 96 100
+#> * Created 100 x 120 matrix.
+#> * Removed unanimous items: 4 9 14 20 32 53 58 77 79 96 100 
+#> * Remaining: 100 x 109
 
 fit_mlt <- pgIRT(m_mlt_d,
                  model = "default",
@@ -184,15 +188,15 @@ fit_mlt <- pgIRT(m_mlt_d,
 #> =========================================================================
 #> Polya-Gamma data augmentation Item Response Theory Model via EM Algorithm
 #> =========================================================================
-#> = Format ------> Multinomial (# of categories: Min = 2 / Max = 3 )
-#> = Model -------> Default pgIRT 
-#> =
-#> ---------- Implementing EM ----------
+#> * Format ------> Multinomial ( # of categories: Min = 2 / Max = 3 )
+#> * Model -------> Default pgIRT 
+#> *
+#> === Expectation-Maximization ===
 #> Iteration 20: eval = 5.92125e-05
 #> Iteration 40: eval = 1.22543e-05
 #> Iteration 60: eval = 3.6913e-06
 #> Iteration 80: eval = 1.31633e-06
-#> Model converged at iteration 87 : 0.1 sec.
+#> Model converged at iteration 87 : 0.2 sec.
 
 summary(fit_mlt)$theta
 #> # A tibble: 100 x 3
@@ -231,7 +235,7 @@ dyn_ops_mlt <- make_dyn_options(m_data_dyn,
                                 vote_col = "vote",
                                 add_matched_bill = bill_match,
                                 clean = TRUE)
-#> Remove some bills because they are unanimous votings: 4 9 14 20 32 53 58 77 79 96 100
+#> * Removed unanimous items: 4 9 14 20 32 53 58 77 79 96 100
 
 fit_mlt_d <- pgIRT(m_mlt_d,
                    mode = "dynamic",
@@ -241,14 +245,15 @@ fit_mlt_d <- pgIRT(m_mlt_d,
 #> =========================================================================
 #> Polya-Gamma data augmentation Item Response Theory Model via EM Algorithm
 #> =========================================================================
-#> = Format ------> Multinomial (# of categories: Min = 2 / Max = 3 )
-#> = Model -------> Dynamic pgIRT 
-#> =
-#> ---------- Implementing EM ----------
-#> Iteration 20: eval = 1.28497e-05
-#> Iteration 40: eval = 2.30141e-06
-#> Iteration 60: eval = 1.35263e-06
-#> Model converged at iteration 74 : 0.4 sec.
+#> * Format ------> Multinomial ( # of categories: Min = 2 / Max = 3 )
+#> * Model -------> Dynamic pgIRT 
+#> *
+#> === Expectation-Maximization ===
+#> Iteration 20: eval = 8.52446e-05
+#> Iteration 40: eval = 1.75347e-05
+#> Iteration 60: eval = 5.34718e-06
+#> Iteration 80: eval = 1.76179e-06
+#> Model converged at iteration 92 : 0.3 sec.
 ```
 
 Returning 99% confidence interval:
@@ -258,27 +263,27 @@ boot_mlt_d <- pgIRT_boot(fit_mlt_d, boot = 100, verbose = 20)
 #> ================================================================
 #> Parametric Bootstrap for pgIRT ( Dynamic model )
 #> ================================================================
-#> Boostrap 20 DONE : 5.2 sec
-#> Boostrap 40 DONE : 10.9 sec
-#> Boostrap 60 DONE : 15.8 sec
-#> Boostrap 80 DONE : 21.2 sec
-#> Boostrap 100 DONE : 26.1 sec
+#> Boostrap 20 DONE : 8.4 sec
+#> Boostrap 40 DONE : 15.5 sec
+#> Boostrap 60 DONE : 22.9 sec
+#> Boostrap 80 DONE : 30.9 sec
+#> Boostrap 100 DONE : 38.9 sec
 
 summary(boot_mlt_d, parameter = "theta", ci = .99)
 #> ==================== Parameter = theta ==================== 
 #> # A tibble: 985 x 7
 #>    unit  variable session ci       lwr estimate     upr
 #>    <chr> <chr>      <int> <chr>  <dbl>    <dbl>   <dbl>
-#>  1 1     theta          1 99%    0.921    1.01   1.09  
-#>  2 2     theta          1 99%    0.380    0.467  0.560 
-#>  3 3     theta          1 99%   -0.358   -0.317 -0.262 
-#>  4 4     theta          1 99%   -0.276   -0.217 -0.153 
-#>  5 5     theta          1 99%   -0.241   -0.177 -0.0931
-#>  6 6     theta          1 99%   -0.365   -0.318 -0.261 
-#>  7 7     theta          1 99%   -0.378   -0.323 -0.272 
-#>  8 8     theta          1 99%   -0.353   -0.299 -0.236 
-#>  9 9     theta          1 99%   -0.361   -0.317 -0.269 
-#> 10 10    theta          1 99%   -0.237   -0.179 -0.119 
+#>  1 1     theta          1 99%    1.76     1.99   2.22  
+#>  2 2     theta          1 99%    0.454    0.620  0.756 
+#>  3 3     theta          1 99%   -0.469   -0.313 -0.198 
+#>  4 4     theta          1 99%   -1.09    -0.894 -0.753 
+#>  5 5     theta          1 99%   -0.377   -0.245 -0.0884
+#>  6 6     theta          1 99%   -0.436   -0.314 -0.191 
+#>  7 7     theta          1 99%   -0.517   -0.314 -0.189 
+#>  8 8     theta          1 99%   -0.428   -0.305 -0.232 
+#>  9 9     theta          1 99%   -0.442   -0.312 -0.186 
+#> 10 10    theta          1 99%    0.212    0.362  0.446 
 #> # ... with 975 more rows
 ```
 

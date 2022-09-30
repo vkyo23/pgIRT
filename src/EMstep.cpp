@@ -41,39 +41,32 @@ arma::mat update_alpha(const arma::mat& Y,
       double sig_part = 0;
       double mu_part = 0;
       double collapse = 0;
-      if (!NumericVector::is_na(beta(j, k))) {
-        for (int i = 0; i < I; i++) {
-          if (!NumericVector::is_na(Y(i, j))) {
-            int IY = 0;
-            int kk = k + 1;
-            if (Y(i, j) == kk) {
-              IY = 1;
-            }
-            IYs(i, j, k) = IY;
-            if (k == 0) {
-              sig_part += Omega(i, j, k);
-              mu_part += IY - 0.5;
-              collapse += Omega(i, j, k) * theta[i];
-            } else if ((IYs(i, j, k-1) == 1) | NumericVector::is_na(IYs(i, j, k-1))) {
-              sig_part += 0;
-              mu_part += 0;
-              collapse += 0;
-              IYs(i, j, k) = NA_REAL;
-            } else {
-              sig_part += Omega(i, j, k);
-              mu_part += IY - 0.5;
-              collapse += Omega(i, j, k) * theta[i];
-            }
-          } else {
-            IYs(i, j, k) = NA_REAL;
+      int kk = k + 1.0;
+      for (int i = 0; i < I; i++) {
+        if (!NumericVector::is_na(Y(i, j))) {
+          int IY = 0.0;
+          if (Y(i, j) == kk) {
+            IY = 1.0;
           }
+          IYs(i, j, k) = IY;
+          double s_ij = IY - 0.5;
+          if (k > 0) {
+            if ((IYs(i, j, k-1) == 1) | (IntegerVector::is_na(IYs(i, j, k-1)))) {
+              IYs(i, j, k) = NA_INTEGER;
+            }
+          }
+          if (!IntegerVector::is_na(IYs(i, j, k))) {
+            sig_part += Omega(i, j, k);
+            mu_part += s_ij;
+            collapse += Omega(i, j, k) * theta(i, 0);
+          } 
+        } else {
+          IYs(i, j, k) = NA_INTEGER;
         }
-      } else {
-        sig_part = NA_REAL;
-        mu_part = NA_REAL;
-        collapse = NA_REAL;
       }
-      draw(j, k) = (a0(j, k)/A0(j, k) + mu_part - (collapse * beta(j, k))) / (1/A0(j, k) + sig_part);
+      sig_part = sig_part + 1 / A0(j, k);
+      mu_part = mu_part - collapse * beta(j, k) + a0(j, k) / A0(j, k);
+      draw(j, k) = (1 / sig_part) * mu_part;
     }
   }
   return draw;
@@ -95,31 +88,28 @@ arma::mat update_beta(const arma::mat& Y,
       double sig_part = 0;
       double mu_part = 0;
       double collapse = 0;
+      int kk = k + 1.0;
       if (!NumericVector::is_na(alpha(j, k))) {
         for (int i = 0; i < I; i++) {
           if (!NumericVector::is_na(Y(i, j))) {
             int IY = 0;
-            int kk = k + 1;
             if (Y(i, j) == kk) {
               IY = 1;
             }
             IYs(i, j, k) = IY;
-            if (k == 0) {
-              sig_part += Omega(i, j, k) * std::pow(theta[i], 2.0);
-              mu_part += (IY - 0.5) * theta[i];
-              collapse += Omega(i, j, k) * theta[i]; 
-            } else if ((IYs(i, j, k-1) == 1) | NumericVector::is_na(IYs(i, j, k-1))) {
-              sig_part += 0;
-              mu_part += 0;
-              collapse += 0;
-              IYs(i, j, k) = NA_REAL;
-            } else {
-              sig_part += Omega(i, j, k) * std::pow(theta[i], 2.0);
-              mu_part += (IY - 0.5) * theta[i];
-              collapse += Omega(i, j, k) * theta[i]; 
+            double s_ij = IY - 0.5;
+            if (k > 0) {
+              if ((IYs(i, j, k-1) == 1) | (IntegerVector::is_na(IYs(i, j, k-1)))) {
+                IYs(i, j, k) = NA_INTEGER;
+              }
             }
+            if (!IntegerVector::is_na(IYs(i, j, k))) {
+              sig_part += Omega(i, j, k) * std::pow(theta[i], 2.0);
+              mu_part += s_ij * theta[i];
+              collapse += Omega(i, j, k) * theta(i, 0);
+            } 
           } else {
-            IYs(i, j, k) = NA_REAL;
+            IYs(i, j, k) = NA_INTEGER;
           }
         }
       } else {
@@ -127,7 +117,9 @@ arma::mat update_beta(const arma::mat& Y,
         mu_part = NA_REAL;
         collapse = NA_REAL;
       }
-      draw(j, k) = (b0(j, k)/B0(j, k) + mu_part - collapse * alpha(j, k)) / (1/B0(j, k) + sig_part);
+      sig_part = sig_part + 1 / B0(j, k);
+      mu_part = mu_part - collapse * alpha(j, k) + b0(j, k) / B0(j, k);
+      draw(j, k) = (1 / sig_part) * mu_part;
     }
   }
   return draw;
@@ -152,29 +144,29 @@ arma::vec update_theta(const arma::mat& Y,
         if (!NumericVector::is_na(Y(i, j))) {
           if (!NumericVector::is_na(alpha(j, k))) {
             int IY = 0;
-            int kk = k + 1;
+            int kk = k + 1.0;
             if (Y(i, j) == kk) {
-              IY = 1;
+              IY = 1.0;
             }
             IYs(i, j, k) = IY;
-            if (k == 0) {
-              sig_part += Omega(i, j, k) * std::pow(beta(j, k), 2.0);
-              mu_part += (IY - 0.5) * beta(j, k) - Omega(i, j, k) * alpha(j, k) * beta(j, k);
-            } else if ((IYs(i, j, k-1) == 1) | NumericVector::is_na(IYs(i, j, k-1))) {
-              sig_part += 0;
-              mu_part += 0;
-              IYs(i, j, k) = NA_REAL;
-            } else {
-              sig_part += Omega(i, j, k) * std::pow(beta(j, k), 2.0);
-              mu_part += (IY - 0.5) * beta(j, k) - Omega(i, j, k) * alpha(j, k) * beta(j, k);
+            double s_ij = IY - 0.5; 
+            if (k > 0) {
+              if ((IYs(i, j, k-1) == 1) | (IntegerVector::is_na(IYs(i, j, k-1)))) {
+                IYs(i, j, k) = NA_INTEGER;
+              }
             }
+            if (!IntegerVector::is_na(IYs(i, j, k))) {
+              sig_part += Omega(i, j, k) * std::pow(beta(j, k), 2.0);
+              mu_part += s_ij * beta(j, k) - beta(j, k) * Omega(i, j, k) * alpha(j, k);
+            } 
           }
         } else {
-          IYs(i, j, k) = NA_REAL;
+          IYs(i, j, k) = NA_INTEGER;
         }
       } 
     }
-    draw(i) = mu_part / (1 + sig_part);
+    sig_part = sig_part + 1.0;
+    draw(i) = (1 / sig_part) * mu_part;
   }
   if (draw[constraint] < 0) {
     draw = -draw;
@@ -296,9 +288,9 @@ List EMstep(const arma::mat& Y,
   }
   List L = List::create(Named("alpha") = par[0],
                         Named("beta") = par[1],
-                        Named("theta") = par[2],
-                        Named("converge") = converge,
-                        Named("cor") = conv,
-                        Named("iter") = iter);
+                                           Named("theta") = par[2],
+                                                               Named("converge") = converge,
+                                                               Named("cor") = conv,
+                                                               Named("iter") = iter);
   return L;
 }

@@ -48,7 +48,7 @@ make_rollcall <- function(dataframe,
   temp <- apply(temp[, -1], 2, as.numeric)
 
   rownames(temp) <- rname
-
+  cat('* Created', nrow(temp), 'x', ncol(temp), 'matrix.\n')
   return(temp)
 }
 

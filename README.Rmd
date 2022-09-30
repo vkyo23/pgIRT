@@ -24,7 +24,7 @@ knitr::opts_chunk$set(
 
 ## Installation
 
-You can install the development version of pgIRT from [GitHub](https://github.com) with:
+You can install the development version of pgIRT from [GitHub](https://github.com) with: 
 
 ``` r
 remotes::install_github("vkyo23/pgIRT")

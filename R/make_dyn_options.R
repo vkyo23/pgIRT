@@ -65,27 +65,24 @@ make_dyn_options <- function(dataframe,
   
   
   if (clean) {
-    category <- apply(temp, 2, function(x) unique(x[!is.na(x)]))
-    num_cat <- lapply(category, length) %>% unlist()
-    drop_res <- names(num_cat)[which(num_cat == 1)]
-    
-    no_attend <- which(apply(temp, 1, function(x) all(is.na(x))))
-    
+    num_cat <- apply(temp, 2, function(x) length(unique(na.omit(x))))
+    drop_res <- which(num_cat == 1)
     if (length(drop_res) != 0) {
-      cat("Remove some bills because they are unanimous votings:", drop_res, "\n")
+      cat("* Removed unanimous items:", colnames(temp)[drop_res], "\n")
       dataframe <- dataframe %>%
-        filter(!!bill_id %!in% drop_res)
+        filter(!!bill_id %!in% colnames(temp)[drop_res])
     }
     dr <- which(!apply(temp, 2, function(x) min(x, na.rm = TRUE) == 1))
     if (length(dr) != 0) {
-      cat("Remove some bills which do not start from 1:", names(dr), "\n")
+      cat("* Removed items whose response category does not start from 1:", colnames(temp)[dr], "\n")
       dataframe <- dataframe %>%
-        dplyr::filter(!!bill_id %!in% names(dr))
+        dplyr::filter(!!bill_id %!in% colnames(temp)[dr])
     }
+    no_attend <- which(apply(temp, 1, function(x) all(is.na(x))))
     if (length(no_attend) != 0) {
-      cat("Remove some units who have no voting record:", no_attend, "\n")
+      cat("* Removed no-response-record units:", rownames(temp)[no_attend], "\n")
       dataframe <- dataframe %>%
-        filter(!!unit_id %!in% no_attend)
+        filter(!!unit_id %!in% rownames(temp)[no_attend])
     }
   }
   

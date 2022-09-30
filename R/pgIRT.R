@@ -139,16 +139,16 @@ pgIRT <- function(data,
   ## Check whether the data is binary matrix
   check_bin <- length(unique(na.omit(as.vector(data)))) == 2
   if (check_bin) {
-    cat('= Format ------> Binary\n')
+    cat('* Format ------> Binary\n')
   } else {
     ## Stop if k = 0 detected
     if (any(as.vector(na.omit(data)) == 0)) {
-      stop('`pgIRT` does not support k = 0 for multinomial model. The response categories must starts from 1 and missing values must be NA.')
+      stop('`pgIRT` does not support k = 0. The response categories must starts from 1 and missing values must be NA.')
     }
-    cat('= Format ------> Multinomial')
-    cat(' (# of categories: Min =', min(num_cat), '/ Max =', K, ')\n')
+    cat('* Format ------> Multinomial')
+    cat(' ( # of categories: Min =', min(num_cat), '/ Max =', K, ')\n')
   }
-  cat("= Model ------->", ifelse(model == 'default', 'Default pgIRT', 'Dynamic pgIRT'), "\n")
+  cat("* Model ------->", ifelse(model == 'default', 'Default pgIRT', 'Dynamic pgIRT'), "\n")
   ## Dynamic options
   if (model == 'dynamic') {
     if (is.null(dyn_options)) stop("Please supply `dyn_options`! See more detail: ?make_dyn_options.")
@@ -271,7 +271,7 @@ pgIRT <- function(data,
   input$constraint <- constraint
   # Implementation
   stime <- proc.time()[3]
-  cat("=\n---------- Implementing EM ----------\n")
+  cat("*\n=== Expectation-Maximization ===\n")
   if (is.null(verbose)) verbose <- maxit + 1
   if (model == 'default') {
     em <- EMstep(Y = data,

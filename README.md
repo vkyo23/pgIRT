@@ -10,7 +10,11 @@ is available for the data containing K &gt;= 2 response category (binary
 addition, the implementation includes the dynamic IRT model. The
 algorithm here is based on Goplerud (2019). This package also utilizes
 the parametric bootstrap method proposed by Lewis and Poole (2004) to
-estimate confidence interval. <!-- badges: start -->
+estimate confidence interval. 
+
+NOTE (2023-10-24): An upward compatible (`pgIRT` is a special case) and user-friendly package called `poEMirt` is now on GitHub (https://github.com/vkyo23/poEMirt). `pgIRT` will no longer be updated.
+
+<!-- badges: start -->
 <!-- badges: end -->
 
 ## Installation
